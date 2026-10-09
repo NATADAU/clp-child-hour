@@ -43,16 +43,73 @@ button.primary{background:#1b7157;border-color:#1b7157;box-shadow:0 4px 14px #14
 details{margin-top:17px}summary{cursor:pointer;color:#2a6a53;font-weight:700;font-size:13px}
 footer{line-height:1.6}
 @media(max-width:760px){header{padding:38px 0 62px}.panel{padding:19px}.toolbar #export{margin-left:0}.process{gap:7px}.upload{min-height:0}.metric b{font-size:20px}}
+
+/* Expressive editorial dashboard · visual-only layer */
+:root{--aubergine:#47345c;--coral:#f3a083;--gold:#f4c46d;--blue:#7cb8cf}
+body{background:radial-gradient(circle at 8% 13%,#f8e5dd 0,transparent 28%),radial-gradient(circle at 95% 35%,#e7eeef 0,transparent 26%),#f7f7f2}
+header{background:linear-gradient(118deg,#214d46 0%,#286953 56%,#496e75 100%);padding:68px 0 86px}
+header:after{right:-75px;top:-200px;border-color:#ffffff28;transform:rotate(18deg)}
+header:before{content:"";position:absolute;width:270px;height:270px;right:19%;bottom:-195px;background:#f6b99b75;border-radius:50%;filter:blur(2px)}
+h1{font-weight:790;line-height:1.07;max-width:670px;font-size:clamp(34px,5vw,60px);letter-spacing:-.045em}
+header p{max-width:610px;font-size:15px;line-height:1.7}
+.hero-label{display:inline-flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #ffffff55;background:#ffffff16;border-radius:30px;color:#fff;font-size:12px;margin-top:10px}
+.hero-tag{font-size:12px;font-weight:750;padding:7px 12px;background:#fff;color:#345b49;border-radius:40px}
+.hero-right{position:absolute;right:25px;top:15px;width:280px;height:220px;pointer-events:none}
+.orbit{position:absolute;border-radius:50%;border:1px solid #ffffff8a}
+.orbit.one{width:160px;height:160px;right:20px;top:8px;box-shadow:0 0 0 18px #ffffff0a,0 0 0 40px #ffffff0b}
+.orbit.two{width:82px;height:82px;right:146px;top:86px;background:#f5b79a;border:0}
+.orbit.three{width:55px;height:55px;right:4px;top:136px;background:#f3d17f;border:0}
+.orbit.four{width:27px;height:27px;right:156px;top:13px;background:#b4e1d2;border:0}
+.process{padding:17px 22px;border-radius:19px;gap:17px;box-shadow:0 14px 36px #173d3511}
+.process span{font-size:13px}
+.panel{border-radius:23px;padding:34px;border:1px solid #e5e8df;box-shadow:0 15px 45px #2f564515}
+.sectionhead{align-items:center;gap:17px}.sectionhead h2{font-size:25px}
+.stepicon{width:57px;height:57px;border-radius:17px;background:#e3f1e8;font-size:27px}
+.uploads{gap:17px}
+.upload{overflow:hidden;border:1.5px solid #e7e7e0;border-radius:20px;padding:23px 22px;background:#fff;box-shadow:0 6px 24px #223c2a08;min-height:206px}
+.upload:before{content:"";position:absolute;right:-28px;top:-29px;width:115px;height:115px;border-radius:36%;transform:rotate(28deg);background:#eef5ec}
+.upload[data-for="groups"]:before{background:#fff0dd}
+.upload[data-for="hours"]:before{background:#e7f2fa}
+.upload[data-for="salary"]:before{background:#f2eafa}
+.upload:hover,.upload:focus-within{border-color:#8aba9f;box-shadow:0 11px 28px #173d351a;transform:translateY(-3px)}
+.upload.done{border-color:#5fae81;background:#f3faf4}
+.upload .filebadge{position:relative;display:inline-flex;color:#396b50;background:#e3f1e6}
+.upload[data-for="groups"] .filebadge{color:#98692d;background:#fff1d8}
+.upload[data-for="hours"] .filebadge{color:#387693;background:#e4f2fa}
+.upload[data-for="salary"] .filebadge{color:#735187;background:#f0e6f7}
+.upload strong{font-size:17px;position:relative;letter-spacing:-.02em;margin-top:18px}
+.upload small{position:relative;font-size:13px;line-height:1.5}
+.upload input{position:relative;border-radius:8px;color:#395449}
+.upload input::file-selector-button{border:0;border-radius:9px;padding:9px 12px;background:#eaf2ea;color:#225741;font-weight:700;margin-right:12px;cursor:pointer}
+.upload .filecount{position:relative;margin-top:14px;font-size:12px}
+.progress-track{height:10px;background:#ecede7}.progress-fill{background:linear-gradient(90deg,#62ab86,#287959)}
+#calculate{border-radius:13px;padding:15px 23px;background:linear-gradient(110deg,#166b52,#2e9171);box-shadow:0 8px 18px #28795933}
+#clear{border-radius:13px}
+.help{background:#fffaf0;border:1px solid #f0e6cd;border-radius:16px;padding:18px 20px}
+.metrics .metric:nth-child(1){background:#e7f3ed}.metrics .metric:nth-child(2){background:#fff1de}.metrics .metric:nth-child(3){background:#ebf4fa}.metrics .metric:nth-child(4){background:#f4ecfa}
+.metric{border:0;border-radius:17px;padding:21px}
+.metric b{font-size:27px}.metric span{font-size:12px;color:#597064}
+.tabs button{border-radius:11px}
+.tabs button.active{background:#226950;color:white}
+select,input[type=search]{background:#fff;border:1px solid #dce5dc;border-radius:11px;min-height:41px}
+.table-wrap{border-radius:15px;border:1px solid #e3ebe4}
+th{background:#edf3ee;color:#305b48;font-size:12px;text-transform:none}
+tr:nth-child(even) td{background:#fcfdfa}
+tr:hover td{background:#eaf5ec}
+footer{padding-bottom:44px}
+@media(max-width:850px){.hero-right{opacity:.28;right:0}.hero-label{max-width:fit-content}}
+@media(max-width:590px){header{padding:45px 0 78px}.hero-right{display:none}.panel{padding:21px}.upload{min-height:190px}.sectionhead h2{font-size:22px}.metric{padding:14px}.process{gap:9px}.process span{font-size:11px}}
+@media(prefers-reduced-motion:reduce){button,.upload,.progress-fill{transition:none!important}}
 </style></head><body>
-<header><div class="wrap"><div class="eyebrow">Центр лечебной педагогики · аналитика РОУ</div><h1>Стоимость детского часа</h1><p>Сопоставление детских и педагогических часов с начислениями сотрудников. Расчёт по совпадающим ФИО, группам и месяцам; несопоставленные данные остаются отдельно.</p></div></header>
+<header><div class="wrap"><div class="eyebrow">Центр лечебной педагогики · аналитика РОУ</div><h1>Часы, группы,<br>понятная аналитика.</h1><p>Сопоставление детских и педагогических часов с начислениями сотрудников. Расчёт по совпадающим ФИО, группам и месяцам; несопоставленные данные остаются отдельно.</p><span class="hero-label">● Данные обрабатываются в браузере</span> <span class="hero-tag">2025–2026 · сентябрь—июнь</span><div class="hero-right" aria-hidden="true"><i class="orbit one"></i><i class="orbit two"></i><i class="orbit three"></i><i class="orbit four"></i></div></div></header>
 <main class="wrap"><nav class="process" aria-label="Этапы работы"><span><strong>01</strong> · Загрузить отчёты</span><span class="chev">→</span><span><strong>02</strong> · Сверить данные</span><span class="chev">→</span><span><strong>03</strong> · Скачать Excel</span></nav><section class="panel"><div class="sectionhead"><span class="stepicon" aria-hidden="true">▤</span><div><h2>Загрузка отчётов</h2><p class="sub" style="margin:0">Учебный год: сентябрь — июнь · 10 месяцев</p></div></div><p class="sub">Можно выбрать несколько файлов за разные месяцы. Обработка выполняется в вашем браузере: таблицы не отправляются на GitHub или другой сервер.</p><div class="uploads">
 <label class="upload" data-for="child"><span class="filebadge">01 · ДЕТСКИЕ ЧАСЫ</span><strong>Детский табель</strong><small>Детские часы по группам</small><input id="child" type="file" multiple accept=".xlsx,.xls"><span class="filecount" id="file-child">Файлы не выбраны</span></label>
 <label class="upload" data-for="groups"><span class="filebadge">02 · ГРУППЫ</span><strong>Педагогические часы по группам</strong><small>Часы педагогов в каждой группе</small><input id="groups" type="file" multiple accept=".xlsx,.xls"><span class="filecount" id="file-groups">Файлы не выбраны</span></label>
 <label class="upload" data-for="hours"><span class="filebadge">03 · РАБОЧЕЕ ВРЕМЯ</span><strong>Часы педагогов за месяц</strong><small>Общие фактические часы сотрудника</small><input id="hours" type="file" multiple accept=".xlsx,.xls"><span class="filecount" id="file-hours">Файлы не выбраны</span></label>
 <label class="upload" data-for="salary"><span class="filebadge">04 · НАЧИСЛЕНИЯ</span><strong>Зарплата РОУ</strong><small>Начисления сотрудникам по месяцам</small><input id="salary" type="file" multiple accept=".xlsx,.xls"><span class="filecount" id="file-salary">Файлы не выбраны</span></label>
-</div><div class="progress"><div class="progress-top"><span>Подготовлено источников</span><span id="ready-label">0 из 4</span></div><div class="progress-track"><div id="ready-fill" class="progress-fill"></div></div></div><div class="actions" style="margin-top:20px"><button id="calculate" class="primary">Рассчитать показатели →</button><button id="clear">Очистить</button><span class="message" id="message"></span></div><div class="help">Методика: начисления сотрудника × часы в группе / все часы сотрудника. Далее сумма по группе / детские часы группы. Это предварительная зарплатная составляющая себестоимости. Первичный приём (П) и амбулатория (11) выделены отдельно. Детские часы каждого педагога по занятиям пока не рассчитываются.</div></section>
+</div><div class="progress"><div class="progress-top"><span>Подготовлено источников</span><span id="ready-label">0 из 4</span></div><div class="progress-track"><div id="ready-fill" class="progress-fill"></div></div></div><div class="actions" style="margin-top:20px"><button id="calculate" class="primary">Рассчитать показатели →</button><button id="clear" title="Сбросить загруженные файлы">↺ Сбросить</button><span class="message" id="message"></span></div><div class="help">Методика: начисления сотрудника × часы в группе / все часы сотрудника. Далее сумма по группе / детские часы группы. Это предварительная зарплатная составляющая себестоимости. Первичный приём (П) и амбулатория (11) выделены отдельно. Детские часы каждого педагога по занятиям пока не рассчитываются.</div></section>
 <section class="panel" id="results" hidden><div class="sectionhead"><span class="stepicon" aria-hidden="true">▥</span><div><h2>Результаты расчёта</h2><p class="sub" style="margin:0">Выберите направление, месяц и при необходимости выгрузите таблицу</p></div></div><div class="note" style="margin-top:18px">Внимание: это предварительный зарплатный расчёт, а не окончательный отчёт о детских часах каждого педагога для финансового директора.</div><div class="metrics"><div class="metric"><span>Месяцев</span><b id="k-months">—</b></div><div class="metric"><span>Расчётных групп</span><b id="k-groups">—</b></div><div class="metric"><span>Распределено зарплаты</span><b id="k-money">—</b></div><div class="metric"><span>Замечаний</span><b id="k-errors">—</b></div></div>
-<div class="tabs"><button class="tab active" data-tab="summary">По группам</button><button class="tab" data-tab="detail">По педагогам</button><button class="tab" data-tab="issues">Несовпадения</button></div><div class="toolbar"><select id="section"><option value="all">Все направления</option><option value="main">Основные группы</option><option value="primary">Первичный приём · П</option><option value="outpatient">Амбулатория · 11</option><option value="nocontract">Без контрактов · БК (исключения)</option></select><select id="month"><option value="all">Все месяцы</option></select><input type="search" id="search" placeholder="Найти группу / сотрудника"><button id="export" class="primary">Скачать Excel</button></div><div class="statusline"><span id="rowcount">—</span><span>·</span><span>П — первичный приём, 11 — амбулатория, БК — без контрактов; 05 и 05.1 исключены, 16-МЛ → 16</span></div><div class="table-wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></section></main><footer class="wrap">Версия 1 · Предварительная управленческая оценка. Не публикуйте исходные финансовые или персональные данные в репозитории.</footer>
+<div class="tabs"><button class="tab active" data-tab="summary">По группам</button><button class="tab" data-tab="detail">По педагогам</button><button class="tab" data-tab="issues">Несовпадения</button></div><div class="toolbar"><select id="section"><option value="all">Все направления</option><option value="main">Основные группы</option><option value="primary">Первичный приём · П</option><option value="outpatient">Амбулатория · 11</option><option value="nocontract">Без контрактов · БК (исключения)</option></select><select id="month"><option value="all">Все месяцы</option></select><input type="search" id="search" placeholder="Найти группу / сотрудника"><button id="export" class="primary">↓ Скачать Excel</button></div><div class="statusline"><span id="rowcount">—</span><span>·</span><span>П — первичный приём, 11 — амбулатория, БК — без контрактов; 05 и 05.1 исключены, 16-МЛ → 16</span></div><div class="table-wrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></section></main><footer class="wrap">Версия 1 · Предварительная управленческая оценка. Не публикуйте исходные финансовые или персональные данные в репозитории.</footer>
 <script>
 'use strict';
 const $=id=>document.getElementById(id),inputs=['child','groups','hours','salary'],state={summary:[],detail:[],issues:[],tab:'summary'};
