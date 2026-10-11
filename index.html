@@ -1,129 +1,794 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ЦЛП · Детские часы педагогов</title><script async src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Стоимость детского часа</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-:root{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#263b37;background:#f5f6f1}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1180px;margin:auto;padding:0 23px}header{background:linear-gradient(115deg,#173f37,#307b61 67%,#5b8790);color:white;position:relative;overflow:hidden;padding:52px 0 77px}header:after{content:"";width:300px;height:300px;border:1px solid #ffffff66;border-radius:50%;position:absolute;right:-85px;top:-125px;box-shadow:0 0 0 46px #ffffff10,0 0 0 98px #ffffff0a}header .wrap{position:relative;z-index:1}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#d3e9db;font-weight:800}h1{font-size:clamp(31px,5vw,55px);line-height:1.08;letter-spacing:-.045em;max-width:690px;margin:17px 0}header p{max-width:660px;color:#e4f2eb;line-height:1.65;margin:0}main{position:relative;margin-top:-34px;padding-bottom:60px}.card{background:#fff;border-radius:22px;border:1px solid #e1e8df;box-shadow:0 14px 34px #173f3610;padding:27px;margin-bottom:22px}h2{font-size:23px;margin:0 0 10px;letter-spacing:-.025em}.muted{font-size:13px;color:#6e7a72;line-height:1.55}.steps{display:flex;align-items:center;gap:15px;flex-wrap:wrap;font-size:13px;padding:19px 24px;color:#527667}.steps b{color:#17614a}.uploads{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:23px 0}.filecard{border:1.5px solid #e0e7e1;background:#fafcf9;border-radius:17px;padding:20px;min-width:0}.filecard:nth-child(2){background:#fffaf1}.filecard:nth-child(3){background:#f1f8fb}.filecard:nth-child(4){background:#f9f4fd}.filecard strong{display:block;font-size:16px;margin:8px 0}.chip{display:inline-block;border-radius:25px;background:#dfede2;padding:5px 10px;font-size:11px;font-weight:800;color:#326349}.filecard:nth-child(2) .chip{background:#ffebc9;color:#8a602f}.filecard:nth-child(3) .chip{background:#dceefa;color:#3b6980}.filecard:nth-child(4) .chip{background:#eddef5;color:#725081}input[type=file]{max-width:100%;font-size:12px;margin-top:12px}input::file-selector-button{border:0;border-radius:9px;background:#e3eee7;color:#265e47;padding:9px;cursor:pointer;font-weight:750}.filecard ol{max-height:155px;overflow:auto;padding-left:20px;overflow-wrap:anywhere;font-size:12px;line-height:1.5}.audit{font-size:12px;line-height:1.55;color:#946331}.audit.good{color:#216d4e}.counter{font-size:12px;color:#32664d;font-weight:800;margin-top:10px}button{font:inherit;border-radius:11px;border:1px solid #bfd0c4;padding:11px 16px;background:white;color:#245d48;font-weight:750;cursor:pointer}button.primary{border:0;background:#207255;color:white;padding:13px 23px;box-shadow:0 4px 15px #20725524}button:hover{filter:brightness(.96)}button:disabled{opacity:.6;cursor:wait}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.message{font-size:13px;color:#8c4b38}.callout{background:#fff8e9;border:1px solid #f1e2bc;border-radius:14px;padding:14px 17px;margin:18px 0;font-size:13px;line-height:1.6;color:#755b31}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.stat{border-radius:16px;padding:17px;background:#e8f3ec}.stat:nth-child(2){background:#fef0de}.stat:nth-child(3){background:#e8f2f9}.stat:nth-child(4){background:#f2eaf9}.stat span{font-size:12px;color:#63766b}.stat b{font-size:24px;display:block;margin-top:7px}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:19px 0}.tabs button.active{background:#236f55;color:white;border-color:#236f55}.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}select,input[type=search]{padding:11px;border-radius:10px;border:1px solid #d3e0d7;background:white;font:inherit;font-size:13px}.tablewrap{overflow:auto;max-height:590px;border:1px solid #e0e8df;border-radius:14px;margin-top:15px}table{border-collapse:collapse;min-width:890px;width:100%;font-size:13px}th{position:sticky;top:0;background:#e9f2eb;color:#326249;text-align:left}td,th{padding:12px;border-bottom:1px solid #e8eee7}tbody tr:nth-child(even){background:#fafcf9}td.num{text-align:right;font-variant-numeric:tabular-nums}.summary{font-size:12px;color:#728078;margin:12px 0}.section-note{font-size:13px;background:#eef5ef;border-left:4px solid #4a9b74;padding:13px;margin:14px 0;border-radius:0 10px 10px 0}footer{font-size:12px;color:#77847d;padding:0 0 30px}#results[hidden]{display:none}@media(max-width:760px){.uploads{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.card{padding:18px}.wrap{padding:0 14px}header{padding:37px 0 70px}}
-</style></head><body><header><div class="wrap"><div class="eyebrow">Центр лечебной педагогики · отчёт для финансового директора</div><h1>Стоимость<br>детского часа</h1><p>Учебный год 2025–2026 · сентябрь—июнь. Два отчёта из Интерина для часов и ведомость начислений для расчёта стоимости часа. Расчётные значения отдельно от контрольных замечаний.</p></div></header>
-<main class="wrap"><section class="card steps"><span><b>01</b> Загрузить</span><span>→</span><span><b>02</b> Проверить месяцы</span><span>→</span><span><b>03</b> Рассчитать</span><span>→</span><span><b>04</b> Скачать Excel</span></section>
-<section class="card"><h2>Загрузка исходных отчётов</h2><div class="muted">Октябрь 2025 исключён: корректного детского табеля нет. Расчёт выполняется только за остальные месяцы, для которых загружены оба отчёта 01 и 02. Файлы можно добавлять постепенно, повторная загрузка месяца заменяет прежний файл. Недостающие пары показываются под загрузкой. Названия всех выбранных файлов появятся ниже. Данные обрабатываются только в браузере.</div><div class="uploads">
-<div class="filecard"><span class="chip">01 · ДЕТИ</span><strong>Детский табель</strong><div class="muted">Минуты занятий детей по датам и группам</div><input type="file" id="child" multiple accept=".xlsx,.xls"><div id="info-child"></div></div>
-<div class="filecard"><span class="chip">02 · ЗАНЯТИЯ</span><strong>Отчёт по педагогическим часам</strong><div class="muted">Подробные записи: кто, когда и какую работу выполнял</div><input type="file" id="detail" multiple accept=".xlsx,.xls"><div id="info-detail"></div></div>
+/* Layout: рабочая панель. Сверху три зоны загрузки и лента месяцев, ниже вкладки с таблицами. */
+:root{
+  --bg:#f2f4f5; --surface:#ffffff; --surface-2:#e9edef; --line:#d5dbde; --fg:#17252b; --muted:#5a6a71;
+  --accent:#0d6b73; --accent-soft:#d6ecee; --accent-fg:#ffffff;
+  --ok:#1d7a46; --ok-soft:#d9f0e2; --warn:#8a5a00; --warn-soft:#fbebc4; --err:#b3261e; --err-soft:#f9dedb;
+  --font:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f181c; --surface:#172228; --surface-2:#1f2d34; --line:#2c3c44; --fg:#e4ecef; --muted:#93a5ad;
+  --accent:#4cc1c9; --accent-soft:#17383c; --accent-fg:#06262a;
+  --ok:#59c68a; --ok-soft:#173a29; --warn:#e8b64c; --warn-soft:#3b2e0e; --err:#f2958d; --err-soft:#42201d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f181c; --surface:#172228; --surface-2:#1f2d34; --line:#2c3c44; --fg:#e4ecef; --muted:#93a5ad;
+  --accent:#4cc1c9; --accent-soft:#17383c; --accent-fg:#06262a;
+  --ok:#59c68a; --ok-soft:#173a29; --warn:#e8b64c; --warn-soft:#3b2e0e; --err:#f2958d; --err-soft:#42201d; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:20px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1{font-size:22px;font-weight:600;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:15px;font-weight:600;margin:0}
+.sub{color:var(--muted);margin:2px 0 0}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;align-items:flex-end}
+.priv{font-size:12px;color:var(--muted);max-width:360px}
+button,select,input[type=search]{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:6px;padding:8px 14px;font-weight:500}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.btn.sm{padding:4px 10px;font-size:13px}
+.zones{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.zone{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.zone.drag{border-color:var(--accent);background:var(--accent-soft)}
+.zone .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.zone .num{font-family:var(--mono);color:var(--accent);font-weight:500}
+.zone .hint{font-size:12px;color:var(--muted)}
+.files{display:flex;flex-direction:column;gap:4px;min-height:22px}
+.file{display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--surface-2);border-radius:5px;padding:3px 8px;font-size:12.5px;min-width:0}
+.file span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.file button{background:none;border:0;color:var(--muted);padding:0 2px;font-size:16px;line-height:1}
+.months{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.mrow{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px}
+@media (max-width:760px){.mrow{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.m{border:1px solid var(--line);border-radius:6px;padding:6px 4px;text-align:center;font-size:12px;display:flex;flex-direction:column;gap:3px;align-items:center}
+.m b{font-weight:600;font-size:13px}
+.m.in{border-color:var(--accent);background:var(--accent-soft)}
+.m .dots{display:flex;flex-direction:column;gap:2px;font-size:11px;width:100%}
+.dot{padding:0 3px;border-radius:3px;background:var(--surface-2);color:var(--muted)}
+.dot.y{background:var(--ok-soft);color:var(--ok)}
+.banner{border-radius:6px;padding:8px 12px;font-size:13px;background:var(--warn-soft);color:var(--warn)}
+.banner.ok{background:var(--ok-soft);color:var(--ok)}
+.banner.err{background:var(--err-soft);color:var(--err)}
+nav.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--line);align-items:flex-end}
+nav.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 12px;color:var(--muted);font-weight:500}
+nav.tabs button[aria-selected=true]{color:var(--fg);border-bottom-color:var(--accent)}
+nav.tabs .sp{flex:1}
+nav.tabs button.btn{background:var(--accent);color:var(--accent-fg);border:0;margin-bottom:6px}
+.badge{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;font-size:11px;text-align:center;margin-left:4px;background:var(--surface-2);color:var(--muted)}
+.badge.err{background:var(--err-soft);color:var(--err)} .badge.warn{background:var(--warn-soft);color:var(--warn)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.scroll{overflow-x:auto;max-width:100%}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;position:sticky;top:0;background:var(--surface)}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.click{cursor:pointer} tr.click:hover td{background:var(--surface-2)}
+td.g{font-family:var(--mono);font-weight:500;white-space:nowrap}
+.cost{font-weight:600}
+.cost.pre{font-weight:400;font-style:italic;color:var(--muted)}
+.pill{display:inline-block;border-radius:10px;padding:1px 9px;font-size:12px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.err{background:var(--err-soft);color:var(--err)} .pill.info{background:var(--surface-2);color:var(--muted)}
+.why{font-size:12px;color:var(--muted);margin-top:2px;max-width:420px}
+tfoot td{font-weight:600;border-top:2px solid var(--line)}
+.note{font-size:12.5px;color:var(--muted);max-width:90ch}
+.empty{padding:28px 8px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--fg);font-size:15px;margin-bottom:4px}
+.tools{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.tools label{display:flex;gap:6px;align-items:center;font-size:13px}
+select,input[type=search]{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 8px;max-width:100%}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.card{background:var(--surface-2);border-radius:6px;padding:10px 12px}
+.card .v{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.card .l{font-size:12px;color:var(--muted)}
+.chk{display:grid;grid-template-columns:auto auto 1fr;gap:6px 10px;align-items:start}
+.chk .sec{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.chk .d{font-size:12.5px;color:var(--muted)}
+.sect{display:flex;flex-direction:column;gap:6px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:6px;font-size:13px;max-width:90vw;z-index:9}
+dialog{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;max-width:min(760px,94vw);width:100%}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.maprow{display:grid;grid-template-columns:minmax(120px,200px) 1fr;gap:6px 10px;align-items:center;margin:8px 0}
+.spin{color:var(--muted)}
+.per{display:flex;gap:6px;align-items:center;font-size:13px;margin:0 8px 6px}
+.orgs{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px}.orgs label{display:flex;gap:5px;align-items:center}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Стоимость детского часа</h1>
+      <p class="sub">ЦЛП · учебный год 2025–2026 · расходы на оплату труда на один детский час регулярных занятий</p>
+    </div>
+    <p class="priv">Файлы читаются в этом окне браузера и никуда не отправляются. После закрытия страницы данные не сохраняются.</p>
+  </header>
+
+  <section class="zones" id="zones" aria-label="Загрузка файлов"></section>
+  <section class="months" id="months" aria-label="Месяцы"></section>
+  <div id="banner"></div>
+
+  <div>
+    <nav class="tabs" role="tablist" id="tabs"></nav>
+  </div>
+  <main id="view"></main>
 </div>
-<div class="filecard" style="margin-bottom:16px;background:#f4edf9"><span class="chip">03 · ФИНАНСЫ</span><strong>Начисления зарплаты РОУ</strong><div class="muted">Начисления РОУ за выбранные месяцы. Учитываем также оплату подготовки и другой работы.</div><input type="file" id="salary" accept=".xlsx,.xls" multiple><div id="info-salary"></div></div>
-<div class="callout"><b>Что считаем.</b> Оплата труда включает и занятия, и подготовку, и документацию. Начисления РОУ распределяются между направлениями пропорционально учтённому рабочему времени. Амбулатория и первичные приёмы не входят в стоимость регулярных занятий. Это оценка расходов на зарплату, не полная себестоимость.</div>
-<div class="actions"><button type="button" class="primary" id="run" onclick="document.getElementById(&quot;message&quot;).textContent=&quot;Нажатие принято. Начинаю проверку файлов…&quot;">Рассчитать →</button><button id="reset">Сбросить</button><span class="message" id="message"></span></div></section>
-<section class="card" id="results" hidden><h2>Стоимость детского часа</h2><div class="section-note">Амбулатория (код 11) не включается в стоимость регулярных занятий. Начисления по ней не перераспределяются на другие группы. Подготовка, документация и другая оплачиваемая работа учитываются при распределении зарплаты по всем зафиксированным видам деятельности.</div><p class="muted">В расчёт входят только месяцы с обоими исходными отчётами. Данные амбулатории (11) из стоимости регулярных занятий исключены.</p><div class="stats"><div class="stat"><span>Месяцев учтено</span><b id="nPairs">—</b></div><div class="stat"><span>Детских часов</span><b id="nChild">—</b></div><div class="stat"><span>Групп в расчёте</span><b id="nPed">—</b></div><div class="stat"><span>Замечаний</span><b id="nIssues">—</b></div></div><div class="section-note">Стоимость = отнесённые начисления ÷ детские часы группы. Если начисления не сопоставлены полностью, стоимость указана только как частичный расчёт. Не считайте её окончательной.</div><div class="tabs"><button class="tab active" data-tab="finance">Стоимость часа</button><button class="tab" data-tab="allocation">Распределение начислений</button><button class="tab" data-tab="issues">Проверка данных</button></div><div class="toolbar"><select id="direction"><option value="all">Все направления</option><option value="main">Основные группы</option><option value="bk">Без контрактов · БК</option></select><input type="search" id="filter" placeholder="Найти педагога или группу"><button class="primary" id="export">↓ Скачать Excel для Светы</button></div><div class="summary" id="count"></div><div class="tablewrap"><table><thead id="thead"></thead><tbody id="tbody"></tbody></table></div></section></main><footer class="wrap">ЦЛП · Аналитическая оценка. Не размещайте персональные данные детей в публичном репозитории GitHub. Исходные файлы обрабатываются в браузере.</footer>
+<dialog id="dlg"></dialog>
+<div id="toast" class="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script>
-window.addEventListener('error',function(e){const node=document.getElementById('message');if(node)node.textContent='Ошибка приложения: '+(e.message||'Неизвестная ошибка')+' (строка '+(e.lineno||'?')+'). Пришлите снимок этого сообщения.'});
-window.addEventListener('unhandledrejection',function(e){const node=document.getElementById('message');if(node)node.textContent='Ошибка чтения файла: '+String(e.reason?.message||e.reason||'неизвестно')});
-</script>
-<script>
+(function(){
 'use strict';
-const $=id=>document.getElementById(id),ids=['child','detail'],state={year:[],monthly:[],finance:[],allocation:[],leaders:[],issues:[],tab:'finance'},fmt=n=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n||0);
-const norm=x=>String(x??'').trim().replace(/\s+/g,' ').toUpperCase().replace(/Ё/g,'Е'),num=x=>typeof x==='number'?x:(parseFloat(String(x??'').replace(/\s/g,'').replace(',','.'))||0);
-const mm=x=>{const s=String(x??'').toLowerCase();let m=s.match(/(20\d{2})[-.\s](0?[1-9]|1[0-2])(?:\D|$)/);if(m)return m[1]+'-'+m[2].padStart(2,'0');m=s.match(/(0?[1-9]|1[0-2])[-.](20\d{2})/);if(m)return m[2]+'-'+m[1].padStart(2,'0');const months=['январ','феврал','март','апрел','май','июн','июл','август','сентябр','октябр','ноябр','декабр'];const i=months.findIndex(n=>s.includes(n)),y=s.match(/20\d{2}/);return i>=0&&y?y[0]+'-'+String(i+1).padStart(2,'0'):null};
-const allMonths=Array.from({length:10},(_,i)=>i<4?'2025-'+String(i+9).padStart(2,'0'):'2026-'+String(i-3).padStart(2,'0'));const excludedMonths=new Set(['2025-10']);let expected=[];const monthSet=id=>new Set(stored(id).map(f=>mm(f.name)).filter(m=>allMonths.includes(m)&&!excludedMonths.has(m)));
-const code=x=>{const t=norm(x).replace(/\s+/g,'').replace(/[–—]/g,'-');return ['16-МЛ','16МЛ'].includes(t)?'16':t==='05,1'?'05.1':t};
-const excluded=new Set(['05','05.1','П','ОК.ПЕД.']),isExcluded=g=>excluded.has(g)||/^05(?:$|[._-])/.test(g),outpatientCode='11',direction=g=>g==='11'?'out':g==='БК'?'bk':'main',issue=(list,m,kind,ref,comment)=>list.push({m:m||'—',kind,ref,comment});
-const add=(map,key,n)=>map.set(key,(map.get(key)||0)+n);
-// Confirmed name correspondences for joining teaching records to ROU payroll.
-const personKey=v=>{
- const raw=norm(v),key=raw.replace(/[^А-ЯA-Z0-9]/g,'');
- const alias=[
-  [/^ВАНДЫШЕВА(?:КОЛОМЫЦЕВА)?АА$/,'ВАНДЫШЕВААА'],
-  [/^ГАЕВАВА(?:САВИНАВА)?$/,'ГАЕВАВА'],
-  [/^НОВИЧКОВАД(?:С)?$/,'НОВИЧКОВАДС'],
-  [/^ПИТРЮКМ(?:А)?$/,'ПИТРЮКМА'],
-  [/^СЕМЕНЮКОИ$/,'СЕМЕНЮКОИ'],
-  [/^(?:КРИВОРОГЕЮ|ДИКОВАВБКРИВОРОГЕ)$/,'КРИВОРОГЕЮ']
- ];
- for(const [pattern,canonical] of alias)if(pattern.test(key))return canonical;
- return key;
-};
+/* ---------- утилиты ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=(n,d=1)=>(n==null||isNaN(n))?'—':n.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+const money=n=>(n==null||isNaN(n))?'—':n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';
+const keyOf=(y,m)=>y+'-'+String(m).padStart(2,'0');
+const MS=[];for(let i=0;i<10;i++){MS.push(keyOf(i<4?2025:2026,(8+i)%12+1));}
+const EXCLUDED_MONTH='2025-10'; // Исключён: отсутствует корректный детский табель
+const RU_FULL=['','Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const RU_SHORT=['','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+const mFull=k=>{const [y,m]=k.split('-');return RU_FULL[+m]+' '+y};
+const mShort=k=>{const [y,m]=k.split('-');return RU_SHORT[+m]+' '+y.slice(2)};
+const MSTEM=[['январ',1],['феврал',2],['март',3],['апрел',4],['ма',5],['июн',6],['июл',7],['август',8],['сентябр',9],['октябр',10],['ноябр',11],['декабр',12]];
+function serial(v){const d=new Date(Math.round((v-25569)*864e5));return {y:d.getUTCFullYear(),m:d.getUTCMonth()+1,d:d.getUTCDate()}}
+function parseDate(v){
+  if(v==null||v==='')return null;
+  if(v instanceof Date)return {y:v.getUTCFullYear(),m:v.getUTCMonth()+1,d:v.getUTCDate()};
+  if(typeof v==='number')return (v>30000&&v<80000)?serial(v):null;
+  const s=String(v).trim();let m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+  if(m)return {y:+m[3],m:+m[2],d:+m[1]};
+  m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return {y:+m[1],m:+m[2],d:+m[3]};
+  return null;
+}
+function parseMonth(v){
+  if(v==null||v==='')return null;
+  if(typeof v==='number'||v instanceof Date){const d=parseDate(v);return d?keyOf(d.y,d.m):null}
+  const s=String(v).toLowerCase().trim();
+  let m=s.match(/(январ|феврал|март|апрел|ма[йя]|июн|июл|август|сентябр|октябр|ноябр|декабр)[а-я]*\.?\s*(\d{4})/);
+  if(m){const st=MSTEM.find(x=>m[1].startsWith(x[0]));return keyOf(+m[2],st[1])}
+  m=s.match(/^(\d{1,2})[.\/-](\d{4})$/);if(m)return keyOf(+m[2],+m[1]);
+  m=s.match(/^(\d{4})-(\d{2})(?:-\d{2})?$/);if(m)return keyOf(+m[1],+m[2]);
+  m=s.match(/^\d{1,2}\.(\d{1,2})\.(\d{4})$/);if(m)return keyOf(+m[2],+m[1]);
+  return null;
+}
+function monthFromName(n){const m=String(n).match(/(\d{2})[.\-_](\d{4})/);return m?keyOf(+m[2],+m[1]):null}
+const num=v=>{if(typeof v==='number')return isFinite(v)?v:null;if(v==null)return null;const s=String(v).replace(/[\s ]/g,'').replace(',','.');if(s===''||!/^-?\d+(\.\d+)?$/.test(s))return null;return parseFloat(s)};
+const normH=v=>String(v==null?'':v).toLowerCase().replace(/\s+/g,' ').trim();
+function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>e.hidden=true,4200)}
 
-const uploads={child:new Map(),detail:new Map(),salary:new Map()};
-const stored=id=>[...uploads[id].values()];
-function addFiles(id,newFiles){for(const file of newFiles){const period=mm(file.name),key=id==='salary'?file.name.toLowerCase():period||file.name.toLowerCase();uploads[id].set(key,file)}$(id).value='';$('results').hidden=true;updateFiles()}
-function updateFiles(){
- const common=[...monthSet('child')].filter(m=>monthSet('detail').has(m)).sort();expected=common;
- for(const id of ['child','detail','salary']){
-  const files=stored(id),box=$('info-'+id);box.replaceChildren();
-  const counter=document.createElement('div');counter.className='counter';counter.textContent=files.length+' файл(ов) добавлено';box.append(counter);
-  if(files.length){const list=document.createElement('ol');for(const file of files){const li=document.createElement('li');li.textContent=file.name;list.append(li)}box.append(list)}
-  if(id!=='salary'){const found=monthSet(id),other=monthSet(id==='child'?'detail':'child'),pending=[...found].filter(m=>!other.has(m)).sort(),msg=document.createElement('div');msg.className='audit '+(!pending.length?'good':'');msg.textContent=pending.length?'Нет парного отчёта за: '+pending.join(', '):found.size+' мес. загружено';box.append(msg)}
-  if(files.length){const btn=document.createElement('button');btn.type='button';btn.textContent='Очистить этот набор';btn.style.marginTop='8px';btn.onclick=()=>{uploads[id].clear();$('results').hidden=true;updateFiles()};box.append(btn)}
- }
+/* ---------- коды групп ---------- */
+const L2C={A:'А',B:'В',C:'С',E:'Е',H:'Н',K:'К',M:'М',O:'О',P:'Р',T:'Т',X:'Х',Y:'У'};
+function normCode(c){
+  if(c==null)return '';
+  let s=typeof c==='number'?String(c).padStart(2,'0'):String(c).trim();
+  s=s.replace(/\s+/g,'').toUpperCase().replace(/[–—]/g,'-').replace(/[ABCEHKMOPTXY]/g,x=>L2C[x]);
+  if(/^\d$/.test(s))s='0'+s;
+  if(/^16[-_]?МЛ$/.test(s))s='16';
+  return s;
+}
+function classify(g){
+  if(g==='')return 'empty';
+  if(/^0?5(?!\d)/.test(g))return 'g05';
+  if(g==='П')return 'primary';
+  if(/^ОК\.?ПЕД/.test(g))return 'okped';
+  if(/^11(?!\d)/.test(g))return 'amb';
+  return 'regular';
+}
+const CLS_NAME={g05:'Группы 05 и 05.1',primary:'П — первичный приём',okped:'ОК.ПЕД. — околопедагогическая работа',amb:'11 — амбулатория',empty:'Без кода группы'};
+
+/* ---------- ФИО ---------- */
+const nk=s=>String(s==null?'':s).toLowerCase().replace(/ё/g,'е').replace(/[\s. ]+/g,'');
+function initials(s){
+  const m=String(s).trim().match(/^([А-ЯЁа-яё\-]+)\s+([А-ЯЁ][а-яё]+)\s+([А-ЯЁ][а-яё]+)$/);
+  return m?m[1]+' '+m[2][0]+'.'+m[3][0]+'.':s;
+}
+const ALIASES=[
+  ['Вандышева А. А.','Вандышева (Коломыцева) А. А.','Коломыцева А. А. (Вандышева)'],
+  ['Гаева В. А.','Гаева В. А. (Савина В. А.)'],
+  ['Новичкова Д. С.','Новичкова Д.'],
+  ['Питрюк М. А.','Питрюк М.'],
+  ['Семенюк О. И.','Семенюк О.И.'],
+  ['Дикова В. Б. (Криворог Е.)','Криворог Е. Ю.']
+];
+const ALIAS=new Map();ALIASES.forEach(g=>g.forEach(v=>ALIAS.set(nk(v),nk(g[0]))));
+const canon=name=>{const k=nk(initials(name));return ALIAS.get(k)||k};
+let SEP=new Set(['БК','32']);try{const j=localStorage.getItem('cch-sep');if(j)SEP=new Set(JSON.parse(j))}catch(e){}
+const saveSep=()=>{try{localStorage.setItem('cch-sep',JSON.stringify([...SEP]))}catch(e){}};
+let MANUAL={};try{MANUAL=JSON.parse(localStorage.getItem('cch-manual')||'{}')}catch(e){}
+const saveManual=()=>{try{localStorage.setItem('cch-manual',JSON.stringify(MANUAL))}catch(e){}};
+const repKey=name=>{const c=canon(name);return MANUAL[c]||c};
+
+/* ---------- состояние ---------- */
+const S={tabel:{},report:{},payroll:{},opts:{subRG:true,okped:false},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
+
+/* ---------- разбор файлов ---------- */
+function sheetsOf(buf){
+  const wb=XLSX.read(buf,{type:'array'});
+  return wb.SheetNames.map(n=>({name:n,rows:XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,defval:null,blankrows:true})}));
+}
+function detectKind(rows){
+  const flat=rows.slice(0,60).map(r=>r.map(normH));
+  if(flat.some(r=>r.includes('фио специалиста'))&&flat.some(r=>r.some(c=>c.startsWith('минут занятия'))))return 'report';
+  if(flat.some(r=>r[0]==='фамилия имя'))return 'tabel';
+  return null;
+}
+function parseTabel(rows,fname){
+  const hi=rows.findIndex(r=>normH(r[0])==='фамилия имя');
+  if(hi<0)throw new Error('Не найдена строка заголовка «Фамилия Имя»');
+  const hdr=rows[hi];let mk=null;
+  for(let i=0;i<hi&&!mk;i++){const r=rows[i];const j=r.findIndex(c=>normH(c)==='месяц');if(j>=0)mk=parseMonth(r[j+1])}
+  if(!mk)mk=monthFromName(fname);
+  if(!mk)throw new Error('Не удалось определить месяц табеля');
+  const up=hi>0?rows[hi-1].map(c=>String(c==null?'':c).trim().toUpperCase()):[];
+  const rgCol=up.indexOf('РГ'),totCol=up.indexOf('ИТОГО');
+  const days=[];hdr.forEach((c,i)=>{if(i>=2&&/^\d{1,2}$/.test(String(c).trim())&&(rgCol<0||i<rgCol))days.push(i)});
+  const out=[];let control=null,bad={noName:0,noGroup:0};
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i];if(!r||r.every(c=>c==null))continue;
+    if(/^всего/i.test(String(r[0]||'').trim())){if(totCol>=0)control=num(r[totCol]);break}
+    const child=String(r[0]==null?'':r[0]).trim();
+    if(!child){bad.noName++;continue}
+    const gRaw=r[1]==null?'':String(r[1]).trim();
+    if(!gRaw)bad.noGroup++;
+    let ds=0;days.forEach(j=>{const v=num(r[j]);if(v)ds+=v});
+    const rg=rgCol>=0?(num(r[rgCol])||0):0;
+    const tot=totCol>=0&&num(r[totCol])!=null?num(r[totCol]):ds-rg;
+    out.push({child,group:normCode(gRaw),ds,rg,tot});
+  }
+  return {month:mk,rows:out,control,bad,fileName:fname};
+}
+function parseReport(rows,fname){
+  const hi=rows.findIndex(r=>r.some(c=>normH(c)==='фио специалиста'));
+  if(hi<0)throw new Error('Не найдена колонка «ФИО специалиста»');
+  const h=rows[hi].map(normH);const ix=n=>h.findIndex(c=>c===n||c.startsWith(n));
+  const C={type:ix('тип занятия'),date:ix('дата занятия'),code:ix('код группы'),child:ix('фи ребенка'),fact:ix('минут занятия (факт)'),hours:h.indexOf('часы'),fio:ix('фио специалиста'),reason:ix('причина отсутствия')};
+  for(const k of ['date','code','fact','fio'])if(C[k]<0)throw new Error('Не найдена колонка отчёта: '+k);
+  const raw=[];let control=null;
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i];if(!r||r.every(c=>c==null))continue;
+    if(r.some(c=>/^всего минут/i.test(String(c||'').trim()))){control={fact:num(r[C.fact]),hours:C.hours>=0?num(r[C.hours]):null};continue}
+    if(r.some(c=>/^всего часов/i.test(String(c||'').trim())))continue;
+    raw.push({r,i});
+  }
+  const cnt={};const rowsOut=[];const bad={noDate:0,noFio:0,noCode:0,noHours:0,noType:0};
+  for(const {r} of raw){
+    const d=parseDate(r[C.date]);
+    if(!d){if(r[C.fio]!=null||r[C.type]!=null)bad.noDate++;continue}
+    const k=keyOf(d.y,d.m);cnt[k]=(cnt[k]||0)+1;
+    const fact=num(r[C.fact]);let hrs=C.hours>=0?num(r[C.hours]):null;
+    if(hrs==null&&fact!=null){hrs=fact/60;bad.noHours++}
+    const fio=String(r[C.fio]==null?'':r[C.fio]).trim();const code=normCode(r[C.code]);const type=String(r[C.type]==null?'':r[C.type]).trim().toUpperCase();
+    if(!fio)bad.noFio++;if(!code)bad.noCode++;if(!type)bad.noType++;
+    rowsOut.push({k,fio,code,type,hrs:hrs||0,fact:fact||0,reason:C.reason>=0?r[C.reason]:null});
+  }
+  let mk=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||monthFromName(fname);
+  if(!mk)throw new Error('В отчёте нет строк с датами');
+  const inM=rowsOut.filter(x=>x.k===mk),out=rowsOut.length-inM.length;
+  return {month:mk,rows:inM,outOfMonth:out,control,sumFact:rowsOut.reduce((a,x)=>a+x.fact,0),bad,fileName:fname};
+}
+function toMoney(v){return num(v)}
+function parsePayroll(sheets,fname){
+  const fileM=monthFromName(fname);let layout=null;const per=[];
+  for(const sh of sheets){
+    const rows=sh.rows;let L=null,start=0;
+    for(let hi=0;hi<Math.min(rows.length,40)&&!L;hi++){
+      const h=rows[hi].map(normH);
+      const nameC=h.findIndex(c=>/^(фио|ф\.и\.о|сотрудник|работник|фамилия)/.test(c));
+      if(nameC<0)continue;
+      const monthCols=[];h.forEach((c,i)=>{if(i!==nameC){const m=parseMonth(rows[hi][i]);if(m)monthCols.push([i,m])}});
+      const mC=h.findIndex(c=>/^(месяц|период)/.test(c));
+      const orgC=h.findIndex(c=>/^организация/.test(c));
+      let sC=-1;for(const pt of [/^начисл/,/^сумма/,/^итого/,/к выплате/,/оклад/]){sC=h.findIndex((c,i)=>i!==nameC&&pt.test(c));if(sC>=0)break}
+      if(!monthCols.length&&sC<0)continue;
+      let titleM=null;for(let i=0;i<hi&&!titleM;i++)for(const c of rows[i])if(typeof c==='string'&&!titleM)titleM=parseMonth(c);
+      L={nameC,sC,mC,orgC,monthCols,titleM};start=hi+1;
+    }
+    if(!L&&layout){L=layout;start=0}
+    if(!L)continue;layout=L;
+    const by={};
+    const push=(m,org,nm,v)=>{(by[m]=by[m]||[]).push({org,name:nm,sum:v})};
+    for(let i=start;i<rows.length;i++){
+      const r=rows[i];if(!r)continue;const nm=String(r[L.nameC]==null?'':r[L.nameC]).trim();
+      if(!nm||/^итого|^всего/i.test(nm))continue;
+      const org=L.orgC>=0?String(r[L.orgC]==null?'':r[L.orgC]).trim():'';
+      if(L.monthCols.length){for(const [c,m] of L.monthCols){const v=toMoney(r[c]);if(v!=null)push(m,org,nm,v)}}
+      else{const v=toMoney(r[L.sC]);if(v==null)continue;const m=L.mC>=0?parseMonth(r[L.mC]):(L.titleM||fileM);if(m)push(m,org,nm,v)}
+    }
+    if(Object.keys(by).length)per.push({name:sh.name,by});
+  }
+  if(!per.length)return null;
+  const byMonth={},dups=[];
+  for(const sp of per)for(const [m,rows] of Object.entries(sp.by)){
+    if(byMonth[m])dups.push({m,from:byMonth[m].sheet,to:sp.name});
+    byMonth[m]={rows,sheet:sp.name};
+  }
+  return {byMonth,dups,fileName:fname};
 }
 
-for(const id of ['child','detail','salary'])$(id).addEventListener('change',()=>addFiles(id,$(id).files));
-updateFiles();
-async function load(id){const result=[];for(const file of stored(id)){const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});result.push({name:file.name,sheets:wb.SheetNames.map(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:null,raw:true}))})}return result}
-function parseChild(book,children,issues){let found=0;for(const sh of book.sheets){const h=sh.findIndex(r=>norm(r?.[0])==='ФАМИЛИЯ ИМЯ'&&norm(r?.[1])==='ГРУППА');if(h<0)continue;const m=mm(book.name)||mm(sh[h-2]?.[1]);if(!expected.includes(m)){issue(issues,m,'Месяц не определён',book.name,'Детский табель пропущен');continue}const dates=sh[h].map((x,i)=>({i,d:num(x)})).filter(x=>x.i>=2&&x.d>=1&&x.d<=31);for(const row of sh.slice(h+1)){const child=norm(row?.[0]),g=code(row?.[1]);if(!child||!g||/ИТОГО|ВСЕГО/.test(child))continue;if(isExcluded(g))continue;for(const {i,d} of dates){const minutes=num(row[i]);if(minutes>0){const key=m+'|'+String(d).padStart(2,'0')+'|'+g+'|'+child;add(children,key,minutes);found++}}}}if(!found)issue(issues,mm(book.name),'Пустой детский табель',book.name,'В файле нет строк с детьми, группами и минутами занятий. Проверьте выгрузку из Интерина; месяц не включён в расчёт.')}
-function parseDetail(book,teachers,issues,allWork){
-let count=0;
-for(const sh of book.sheets){
- const h=sh.findIndex(r=>norm(r?.[0])==='ТИП ЗАНЯТИЯ'&&norm(r?.[1])==='ДАТА ЗАНЯТИЯ');if(h<0)continue;
- for(const r of sh.slice(h+1)){
-  const typ=norm(r?.[0]),date=String(r?.[1]??''),dt=date.match(/^(\d{1,2})\.(\d{1,2})\.(20\d{2})/),m=dt?dt[3]+'-'+dt[2].padStart(2,'0'):mm(book.name),d=dt?dt[1].padStart(2,'0'):null,g=code(r?.[5]),emp=norm(r?.[10]),child=norm(r?.[6]),minutes=num(r?.[8]);
-  if(!expected.includes(m)||!emp||minutes<=0)continue;
-  add(allWork,m+'|'+personKey(emp),minutes/60);
-  if(!d||!g||g===outpatientCode||isExcluded(g)||!['GRP','IND'].includes(typ))continue;
-  if(/КОНСУЛЬТАЦ|ПЕРВИЧН|ТЕХНИЧ|КАРТ/.test([r?.[4],r?.[11],r?.[6]].map(norm).join(' ')))continue;
-  const k=m+'|'+d+'|'+g+'|'+emp,record=teachers.get(k)||{m,d,g,emp,group:0,individual:new Map()};
-  if(typ==='GRP')record.group+=minutes;else if(child&&child!=='GROUP')add(record.individual,child,minutes);
-  teachers.set(k,record);count++;
- }
+/* ---------- загрузка ---------- */
+async function addFiles(files,zone){
+  for(const f of files){
+    try{
+      $('#banner').innerHTML='<div class="banner spin">Читаю файл '+esc(f.name)+'…</div>';
+      await new Promise(r=>setTimeout(r,30));
+      const sheets=sheetsOf(await f.arrayBuffer());
+      let kind=null,sh=null;
+      for(const s of sheets){const k=detectKind(s.rows);if(k){kind=k;sh=s;break}}
+      if(!kind&&zone==='payroll')kind='payroll';
+      if(!kind)throw new Error('Файл не похож ни на детский табель, ни на отчёт по часам');
+      if(kind!==zone)toast('«'+f.name+'» распознан как '+({tabel:'детский табель',report:'отчёт по часам',payroll:'начисления'}[kind])+' и добавлен туда');
+      if(kind==='tabel'){const p=parseTabel(sh.rows,f.name);place('tabel',p)}
+      else if(kind==='report'){const p=parseReport(sh.rows,f.name);place('report',p)}
+      else{
+        const p=parsePayroll(sheets,f.name);
+        if(p){placePayroll(p)}else{S.pending={sheets,fname:f.name};openMapping();}
+      }
+    }catch(e){toast('Ошибка: '+f.name+' — '+e.message);console.error(e)}
+  }
+  render();
 }
-if(!count)issue(issues,mm(book.name),'Не найдены занятия',book.name,'Проверьте типы работ и формат отчёта')
+function place(kind,p){
+  if(!MS.includes(p.month)){toast('«'+p.fileName+'»: месяц '+mFull(p.month)+' вне периода сентябрь 2025 — июнь 2026, файл не принят');return}
+  const was=S[kind][p.month];S[kind][p.month]=p;
+  if(was)toast(mFull(p.month)+': файл заменён на «'+p.fileName+'»');
 }
-function parseGroups(book,leaders,issues){let count=0;for(const sh of book.sheets){const head=sh.findIndex(r=>r?.some(v=>/код группы/i.test(String(v??''))));if(head<1)continue;const m=mm(book.name)||mm(sh[0]?.[0]);if(!expected.includes(m))continue;const gr=sh[head],lead=sh[head-2]||[];for(let i=4;i<gr.length;i++){const g=code(gr[i]),name=norm(lead[i]);if(!g||!name||excluded.has(g))continue;leaders.set(m+'|'+g+'|'+name,{m,g,name});count++}}if(!count)issue(issues,mm(book.name),'Не прочитаны руководители',book.name,'Не распознана шапка таблицы по группам')}
-function parseHours(book,totals,issues){let count=0;for(const sh of book.sheets){const head=sh.findIndex(r=>r?.some(v=>norm(v)==='ПЕДАГОГ-РАБОТА'));if(head<0)continue;const m=mm(book.name)||mm(sh[head-1]?.[1]),cols=sh[head].map(norm),name=cols.indexOf('ФАМИЛИЯ И.О.'),hours=cols.indexOf('ПЕДАГОГ-РАБОТА');if(!expected.includes(m)||name<0)continue;for(const r of sh.slice(head+1)){if(!/^\d+$/.test(String(r?.[0]??''))||!r[name])continue;add(totals,m+'|'+norm(r[name]),num(r[hours]));count++}}if(!count)issue(issues,mm(book.name),'Не прочитана общая нагрузка',book.name,'Нет данных для контроля')}
-function parseSalary(books,errors){const pay=new Map();for(const book of books){for(const sh of book.sheets){const h=sh.findIndex(r=>r?.some(v=>norm(v)==='ФИО')&&r?.some(v=>norm(v)==='НАЧИСЛЕННО'));if(h<0)continue;const cols=sh[h].map(norm),fc=cols.indexOf('ФИО'),mc=cols.indexOf('МЕСЯЦ'),ac=cols.indexOf('НАЧИСЛЕННО'),cc=cols.indexOf('ЦФУ');for(const r of sh.slice(h+1)){if(!r?.[fc]||cc>=0&&norm(r[cc])!=='РОУ')continue;const m=mm(r[mc]);if(expected.includes(m))add(pay,m+'|'+personKey(r[fc]),num(r[ac]))}}}if(!pay.size)issue(errors,null,'Зарплатная ведомость','РОУ','Не найдены начисления с ФИО и месяцами');return pay}
-function financeCalc(children,teachers,allWork,salaries,errors){
-const groupHours=new Map(),childHours=new Map(),finance=new Map(),allocation=[];
-for(const r of teachers.values())add(groupHours,r.m+'|'+r.g+'|'+r.emp,(r.group+[...r.individual.values()].reduce((a,b)=>a+b,0))/60);
-for(const [key,min] of children){const [m,d,g]=key.split('|');if(g!==outpatientCode)add(childHours,m+'|'+g,min/60)}
-for(const [key,ch] of childHours){const [m,g]=key.split('|');if(!finance.has(g))finance.set(g,{g,child:0,money:0,ped:0,matched:0,missing:0,complete:true});finance.get(g).child+=ch}
-for(const [key,hours] of groupHours){const [m,g,emp]=key.split('|'),rec=finance.get(g);if(!rec)continue;rec.ped+=hours;
-const total=allWork.get(m+'|'+personKey(emp)),pay=salaries.get(m+'|'+personKey(emp));
-if(!total||pay===undefined||hours>total+0.01){rec.complete=false;rec.missing++;issue(errors,m,'Не распределены начисления',emp+' / '+g,!total?'Нет всех учтённых часов сотрудника':pay===undefined?'Не найдены начисления РОУ':'Часы занятия превышают все учтённые часы');allocation.push({m,g,emp,hours,total:total||0,pay:pay??null,money:null,status:'Не сопоставлено'});continue}
-const money=pay*hours/total;rec.money+=money;rec.matched+=hours;allocation.push({m,g,emp,hours,total,pay,money,status:'Распределено'})}
-state.finance=[...finance.values()].sort((a,b)=>a.g.localeCompare(b.g,'ru',{numeric:true}));state.allocation=allocation.sort((a,b)=>a.m.localeCompare(b.m)||a.g.localeCompare(b.g,'ru',{numeric:true})||a.emp.localeCompare(b.emp,'ru'));for(const rec of state.finance)if(!rec.child||!rec.money)rec.complete=false
+function placePayroll(p){
+  const used=[],out=[];
+  for(const [m,src] of Object.entries(p.byMonth)){
+    if(!MS.includes(m)){out.push(m);continue}
+    S.payroll[m]={fileName:p.fileName,sheet:src.sheet,rows:src.rows,dups:p.dups.filter(d=>d.m===m)};used.push(m);
+  }
+  S.payrollOut=[...new Set([...(S.payrollOut||[]),...out])].sort();
+  if(!used.length)toast('«'+p.fileName+'»: нет месяцев из периода сентябрь 2025 — июнь 2026');
 }
-function calculate(children,teachers,leaderMap,totals,issues){const childByDay=new Map();for(const [key,minutes] of children){const bits=key.split('|'),day=bits.slice(0,3).join('|');if(!childByDay.has(day))childByDay.set(day,new Map());add(childByDay.get(day),bits.slice(3).join('|'),minutes)}const detailed=new Map(),pedByEmp=new Map();for(const rec of teachers.values()){const k=rec.m+'|'+rec.g+'|'+rec.emp,day=rec.m+'|'+rec.d+'|'+rec.g,childrenToday=childByDay.get(day);add(pedByEmp,rec.m+'|'+rec.emp,(rec.group+[...rec.individual.values()].reduce((a,b)=>a+b,0))/60);if(!childrenToday){issue(issues,rec.m,'Нет детского дня',rec.emp+' / '+rec.g,rec.d+' число — педагог работал, дети в табеле не найдены');continue}let minutes=0;for(const [child,childMinutes] of childrenToday){const individual=rec.individual.get(child)||0;minutes+=Math.min(childMinutes,rec.group+individual)}const row=detailed.get(k)||{m:rec.m,g:rec.g,emp:rec.emp,child:0,ped:0,days:0};row.child+=minutes/60;row.ped+=(rec.group+[...rec.individual.values()].reduce((a,b)=>a+b,0))/60;row.days++;detailed.set(k,row)}const annual=new Map();for(const r of detailed.values()){const k=r.emp+'|'+r.g,a=annual.get(k)||{emp:r.emp,g:r.g,child:0,ped:0,months:0};a.child+=r.child;a.ped+=r.ped;a.months++;annual.set(k,a)}state.monthly=[...detailed.values()].sort((a,b)=>a.m.localeCompare(b.m)||a.emp.localeCompare(b.emp,'ru'));state.year=[...annual.values()].sort((a,b)=>a.emp.localeCompare(b.emp,'ru')||a.g.localeCompare(b.g,'ru'));state.leaders=[...leaderMap.values()].sort((a,b)=>a.g.localeCompare(b.g,'ru')||a.m.localeCompare(b.m));state.issues=issues}
-function dataset(){const q=$('filter').value.toLowerCase(),d=$('direction').value;return state[state.tab].filter(r=>(d==='all'||(r.g&&direction(r.g)===d))&&(!q||JSON.stringify(r).toLowerCase().includes(q)))}
-const heads={finance:['Группа','Детские часы','Отнесённые начисления, ₽','Стоимость детского часа, ₽','Покрытие часов','Статус'],allocation:['Месяц','Группа','Педагог','Часы занятий','Все учтённые часы','Начисления РОУ, ₽','Отнесено на группу, ₽','Статус'],issues:['Месяц','Проблема','Объект','Пояснение']};
-function asRow(t,r){return t==='finance'?[r.g,fmt(r.child),fmt(r.money),r.child&&r.matched?fmt(r.money/r.child):'—',r.ped?fmt(100*r.matched/r.ped)+' %':'—',r.complete?'Предварительная оценка':'Неполные данные: '+r.missing]:t==='allocation'?[r.m,r.g,r.emp,fmt(r.hours),fmt(r.total),r.pay===null?'—':fmt(r.pay),r.money===null?'—':fmt(r.money),r.status]:[r.m,r.kind,r.ref,r.comment]}
-function render(){const t=state.tab,cols=heads[t],h=$('thead'),b=$('tbody');h.replaceChildren();b.replaceChildren();const tr=document.createElement('tr');for(const v of cols){const th=document.createElement('th');th.textContent=v;tr.append(th)}h.append(tr);const rows=dataset(),frag=document.createDocumentFragment();for(const r of rows){const row=document.createElement('tr');for(const x of asRow(t,r)){const td=document.createElement('td');td.textContent=x;row.append(td)}frag.append(row)}b.append(frag);$('count').textContent='Строк: '+rows.length}
-async function run(){const btn=$('run');btn.disabled=true;$('message').textContent='Читаю отчёты…';try{if(!window.XLSX)throw Error('Не загрузилась библиотека Excel — возможно, доступ к библиотеке заблокирован');if(ids.some(id=>!stored(id).length)||!stored('salary').length)throw Error('Нужны отчёты 01, 02 и начисления РОУ');if(!expected.length)throw Error('Нет ни одного месяца, за который загружены оба отчёта 01 и 02');const books={};for(const id of ids){$('message').textContent='Читаю '+(id==='child'?'детский табель':'отчёт по занятиям')+'…';books[id]=(await load(id)).filter(b=>expected.includes(mm(b.name)))}for(const id of ids)if(!books[id].length)throw Error('Нет файла № '+({child:'01',detail:'02'}[id])+' за общий месяц. Проверь название файла.');const children=new Map(),teachers=new Map(),allWork=new Map(),leaders=new Map(),totals=new Map(),issues=[];issue(issues,'2025-10','Исключён из расчёта','Октябрь 2025','Корректный детский табель отсутствует; часы и начисления за октябрь не учитываются');for(const m of allMonths){if(excludedMonths.has(m))continue;const ch=monthSet('child').has(m),dt=monthSet('detail').has(m);if(ch!==dt)issue(issues,m,'Неполный месяц','Исходные отчёты',ch?'Нет отчёта 02 за месяц':'Нет отчёта 01 за месяц');else if(!ch)issue(issues,m,'Месяц не загружен','Исходные отчёты','Не входит в расчёт')}books.child.forEach(b=>parseChild(b,children,issues));books.detail.forEach(b=>parseDetail(b,teachers,issues,allWork));if(!children.size||!teachers.size)throw Error('Не удалось распознать детские часы или подробные занятия');for(const id of ids){const ms=new Set(books[id].map(b=>mm(b.name)).filter(Boolean));for(const m of expected)if(!ms.has(m))issue(issues,m,'Отсутствует файл № '+({child:'01',detail:'02'}[id]),id,'Нет файла за этот месяц')}calculate(children,teachers,leaders,totals,issues);$('message').textContent='Читаю начисления…';const salaryBooks=await load('salary'),pay=parseSalary(salaryBooks,issues);financeCalc(children,teachers,allWork,pay,issues);$('message').textContent='Готовлю таблицу…';$('nPairs').textContent=fmt(expected.length);$('nChild').textContent=fmt(state.finance.reduce((a,b)=>a+b.child,0));$('nPed').textContent=fmt(state.finance.length);$('nIssues').textContent=fmt(issues.length);$('results').hidden=false;$('message').textContent='Расчёт за  ' + expected.length + '  мес. готов. Проверьте замечания.';$('results').scrollIntoView({behavior:'smooth',block:'start'});render()}catch(e){$('message').textContent='Ошибка: '+e.message;console.error(e)}finally{btn.disabled=false}}
-function exportExcel(){
-try{
-if(!window.XLSX)throw Error('Библиотека Excel недоступна');
-if(!state.finance.length)throw Error('Сначала рассчитайте отчёт');
-const wb=XLSX.utils.book_new(),sorted=[...state.finance].sort((a,b)=>a.g.localeCompare(b.g,'ru',{numeric:true})),details=[...state.allocation].sort((a,b)=>a.g.localeCompare(b.g,'ru',{numeric:true})||a.m.localeCompare(b.m)||a.emp.localeCompare(b.emp,'ru'));
-const mainHeader=['Группа ↗','Детские часы','Отнесённые начисления, ₽','Стоимость детского часа, ₽','Покрытие часов, %','Статус'];
-const mainRows=[['ЦЛП · СТОИМОСТЬ ДЕТСКОГО ЧАСА'],['Учтённые месяцы: '+expected.join(', ')+'; ОКТЯБРЬ 2025 ИСКЛЮЧЁН'],['Расчёт по начислениям РОУ; не полная себестоимость. Амбулатория 11 и октябрь 2025 исключены.'],['Нажмите номер группы для перехода к расшифровке.'],[],mainHeader];
-const detailRows=[['ЦЛП · РАСШИФРОВКА НАЧИСЛЕНИЙ'],['Педагоги и месяцы; используются только данные, найденные в исходных отчётах.'],[],['Группа','Месяц','Педагог','Часы занятий','Все учтённые часы','Начисления РОУ, ₽','Отнесено на группу, ₽','Статус']];
-const links=new Map();
-for(const r of details){if(!links.has(r.g))links.set(r.g,detailRows.length+1);detailRows.push([r.g,r.m,r.emp,r.hours,r.total,r.pay??null,r.money??null,r.status])}
-for(const r of sorted)mainRows.push([r.g,r.child,r.money,r.child&&r.matched?r.money/r.child:null,r.ped?100*r.matched/r.ped:null,r.complete?'Предварительная оценка':'НЕПОЛНО: '+r.missing+' записей']);
-const checks=[['ЦЛП · ПРОВЕРКА ДАННЫХ'],['Сведения о неполных данных и пропусках месяцев.'],[],['Месяц','Проблема','Объект','Пояснение'],...state.issues.map(r=>[r.m,r.kind,r.ref,r.comment])];
-const sheets=[['Итоги',mainRows,[17,20,29,29,22,31],6],['Расшифровка',detailRows,[17,16,32,20,24,24,27,22],4],['Проверка данных',checks,[17,30,32,85],4]];
-for(const [title,rows,widths,headerRow] of sheets){
- const ws=XLSX.utils.aoa_to_sheet(rows);ws['!cols']=widths.map(wch=>({wch}));ws['!autofilter']={ref:'A'+headerRow+':'+XLSX.utils.encode_col(widths.length-1)+rows.length};
- ws['!freeze']={xSplit:0,ySplit:headerRow};
- XLSX.utils.book_append_sheet(wb,ws,title);
+function allOrgs(){const o=new Set();Object.values(S.payroll).forEach(x=>x.rows.forEach(r=>{if(r.org)o.add(r.org)}));return o}
+function removeFile(kind,m){if(m.startsWith('F:')){const f=m.slice(2);Object.keys(S.payroll).forEach(k=>{if(S.payroll[k].fileName===f)delete S.payroll[k]});}else delete S[kind][m];render()}
+
+/* ---------- ручная настройка файла начислений ---------- */
+function openMapping(){
+  const {sheets}=S.pending;const sh=sheets[0];const rows=sh.rows.slice(0,14);
+  const ncol=Math.min(12,Math.max(...rows.map(r=>r.length),1));
+  const colOpts=sel=>Array.from({length:ncol},(_,i)=>`<option value="${i}" ${i===sel?'selected':''}>Колонка ${i+1}</option>`).join('');
+  const monthOpts=MS.map(m=>`<option value="${m}">${mFull(m)}</option>`).join('');
+  $('#dlg').innerHTML=`<h2>Не удалось определить колонки файла начислений</h2>
+  <p class="note">Укажите, где в файле «${esc(S.pending.fname)}» находятся ФИО и сумма начислений.</p>
+  <div class="scroll"><table><tbody>${rows.map((r,i)=>`<tr><td class="n">${i+1}</td>${Array.from({length:ncol},(_,j)=>`<td>${esc(r[j]==null?'':String(r[j]).slice(0,28))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+  <div class="maprow"><label for="mpFirst">Первая строка данных</label><input id="mpFirst" type="number" min="1" value="2">
+  <label for="mpName">ФИО сотрудника</label><select id="mpName">${colOpts(0)}</select>
+  <label for="mpSum">Сумма начислений</label><select id="mpSum">${colOpts(1)}</select>
+  <label for="mpMonthMode">Месяц</label><select id="mpMonthMode"><option value="col">Берётся из колонки</option><option value="fixed">Один месяц на весь файл</option></select>
+  <label for="mpMonthCol">Колонка месяца</label><select id="mpMonthCol">${colOpts(2)}</select>
+  <label for="mpMonthFixed">Месяц файла</label><select id="mpMonthFixed">${monthOpts}</select></div>
+  <div class="tools"><button class="btn" id="mpOk">Загрузить</button><button class="btn ghost" id="mpCancel">Отмена</button></div>`;
+  $('#dlg').showModal();
+  $('#mpCancel').onclick=()=>{$('#dlg').close();S.pending=null};
+  $('#mpOk').onclick=()=>{
+    const first=Math.max(1,+$('#mpFirst').value)-1,nC=+$('#mpName').value,sC=+$('#mpSum').value,fixed=$('#mpMonthMode').value==='fixed',mC=+$('#mpMonthCol').value,fm=$('#mpMonthFixed').value;
+    const res={};
+    for(let i=first;i<sh.rows.length;i++){
+      const r=sh.rows[i];const nm=String(r[nC]==null?'':r[nC]).trim();const v=toMoney(r[sC]);
+      if(!nm||v==null||/^итого|^всего/i.test(nm))continue;
+      const m=fixed?fm:parseMonth(r[mC]);if(!m)continue;
+      (res[m]=res[m]||{rows:[],sheet:sh.name}).rows.push({org:'',name:nm,sum:v});
+    }
+    if(!Object.keys(res).length){toast('По этим настройкам строки не найдены');return}
+    placePayroll({byMonth:res,dups:[],fileName:S.pending.fname});S.pending=null;$('#dlg').close();render();
+  };
 }
-const main=wb.Sheets['Итоги'],det=wb.Sheets['Расшифровка'];
-for(let i=0;i<sorted.length;i++){
- const cell=main['A'+(i+7)],target=links.get(sorted[i].g);
- if(cell&&target)cell.l={Target:"#'Расшифровка'!A"+target,Tooltip:'Открыть расшифровку группы '+sorted[i].g};
+
+/* ---------- расчёт ---------- */
+function compute(){
+  const months=MS.filter(m=>m!==EXCLUDED_MONTH&&S.tabel[m]&&S.report[m]);
+  const payMap={};let otherOrgSum=0;
+  for(const [m,src] of Object.entries(S.payroll)){
+    const map=new Map();
+    for(const r of src.rows){
+      const k=canon(r.name);const e=map.get(k)||{sum:0,names:[]};e.sum+=r.sum;if(!e.names.includes(r.name.trim()))e.names.push(r.name.trim());map.set(k,e);
+    }
+    payMap[m]={map,fileName:src.fileName};
+  }
+  const G={};const gget=g=>G[g]||(G[g]={g,child:0,reg:0,regCov:0,alloc:0,bm:{},names:new Set()});
+  const gm=(g,m)=>{const x=gget(g);return x.bm[m]||(x.bm[m]={child:0,reg:0,regCov:0,alloc:0})};
+  const dist=[],checks=[{lvl:'info',sec:'Период',month:EXCLUDED_MONTH,text:'Октябрь 2025 исключён из расчёта',detail:'Нет корректного детского табеля; детские и педагогические часы и начисления октября не учтены.'}],excl={},unmatched=[],empMonth=[];
+  const add=(lvl,sec,month,text,detail)=>checks.push({lvl,sec,month,text,detail:detail||''});
+  const seenNames=new Map(),allRepKeys=new Set(),allCodes=new Set();
+  for(const m of months){
+    const T=S.tabel[m],R=S.report[m],P=payMap[m];
+    for(const r of T.rows){
+      const cls=classify(r.group);const mins=S.opts.subRG?r.tot:r.ds;allCodes.add(r.group);
+      if(cls==='regular'){gm(r.group,m).child+=mins/60}
+      else{const k=cls+'|'+m;(excl[k]=excl[k]||{cls,m,child:0,rep:0}).child+=mins/60}
+    }
+    const E={};
+    for(const r of R.rows){
+      if(!(r.hrs>0))continue;
+      allCodes.add(r.code);
+      const key=repKey(r.fio);allRepKeys.add(key);
+      if(!seenNames.has(key))seenNames.set(key,new Set());seenNames.get(key).add(r.fio);
+      const e=E[key]||(E[key]={key,name:r.fio,tot:0,okp:0,regByG:{}});
+      e.tot+=r.hrs;
+      const cls=classify(r.code);
+      if(cls==='okped')e.okp+=r.hrs;
+      if(r.type==='CNS'||cls!=='regular'){
+        if(cls!=='regular'){const k=cls+'|'+m;(excl[k]=excl[k]||{cls,m,child:0,rep:0}).rep+=r.hrs}
+        continue;
+      }
+      e.regByG[r.code]=(e.regByG[r.code]||0)+r.hrs;
+    }
+    for(const e of Object.values(E)){
+      const pe=P?P.map.get(e.key):null;const pay=pe?pe.sum:null;
+      let regT=0,allocT=0;
+      for(const [g,reg] of Object.entries(e.regByG)){
+        const den=S.opts.okped?e.tot-e.okp:e.tot;const share=den>0?reg/den:0;const alloc=pay==null?null:pay*share;
+        regT+=reg;if(alloc!=null)allocT+=alloc;
+        const b=gm(g,m);b.reg+=reg;if(pay!=null){b.regCov+=reg;b.alloc+=alloc}
+        gget(g).names.add(e.name);
+        dist.push({m,g,key:e.key,name:e.name,tot:den,reg,share,pay,alloc});
+      }
+      empMonth.push({m,key:e.key,name:e.name,tot:e.tot,regT,pay,allocT,hasPay:pay!=null});
+      if(pay==null&&regT>0)unmatched.push({m,key:e.key,name:e.name,regT,tot:e.tot,noMonth:!P});
+    }
+  }
+  const groups=[];
+  if(S.period!=='all'&&!months.includes(S.period))S.period='all';
+  const selM=S.period==='all'?months:[S.period];
+  for(const x of Object.values(G)){
+    const bmAll=x.bm;x.bm=Object.fromEntries(Object.entries(bmAll).filter(([m])=>selM.includes(m)));
+    if(!Object.keys(x.bm).length)continue;
+    for(const b of Object.values(x.bm)){x.child+=b.child;x.reg+=b.reg;x.regCov+=b.regCov;x.alloc+=b.alloc}
+    const perM={};for(const m of months){const b=bmAll[m];if(!b)continue;perM[m]={child:b.child,alloc:b.alloc,cost:(b.child>0&&b.reg>0)?b.alloc/b.child:null,ok:b.child>0&&b.reg>0&&b.reg<=b.regCov+1e-9}}
+    const reasons=[];
+    const noPayM=Object.entries(x.bm).filter(([m,b])=>b.reg>b.regCov+1e-9).map(([m])=>m);
+    const noRepM=Object.entries(x.bm).filter(([m,b])=>b.child>0&&b.reg===0).map(([m])=>m);
+    const noChM=Object.entries(x.bm).filter(([m,b])=>b.reg>0&&b.child===0).map(([m])=>m);
+    let status,kind;
+    if(x.child<=0){status='Нет детских часов';kind='info';reasons.push('В табеле нет часов этой группы')}
+    else if(x.reg<=0){status='Нет часов занятий в отчёте';kind='info';reasons.push('В отчёте по часам нет регулярных занятий этой группы')}
+    else{
+      if(noPayM.length)reasons.push('Не найдены начисления педагогов: '+noPayM.map(mShort).join(', '));
+      if(noRepM.length)reasons.push('Нет часов занятий в отчёте: '+noRepM.map(mShort).join(', '));
+      if(noChM.length)reasons.push('Нет детских часов в табеле: '+noChM.map(mShort).join(', '));
+      if(reasons.length){status='Неполно';kind='warn'}else{status='Рассчитано';kind='ok'}
+    }
+    const nB=Object.keys(x.bm).length,per=n=>nB>1?': '+n+' из '+nB+' мес.':'';
+    const whyA=[];
+    if(x.child>0&&x.reg>0){
+      if(noPayM.length)whyA.push('нет начислений у части педагогов'+per(noPayM.length));
+      if(noRepM.length)whyA.push('нет часов занятий в отчёте'+per(noRepM.length));
+      if(noChM.length)whyA.push('нет детских часов в табеле'+per(noChM.length));
+    }else whyA.push(...reasons);
+    const why=whyA.join('; ');
+    const cover=x.reg>0?x.regCov/x.reg:null;
+    const cost=(x.child>0&&x.reg>0)?x.alloc/x.child:null;
+    if(SEP.has(x.g)&&kind==='ok'){status='Отдельно';kind='info';reasons.push('Показана отдельно, в среднее не входит')}
+    groups.push({why,perM,g:x.g,child:x.child,alloc:x.alloc,cost,cover,reg:x.reg,nMonths:Object.keys(x.bm).length,status,kind,reasons,isSep:SEP.has(x.g),teachers:x.names.size});
+  }
+  groups.sort((a,b)=>(a.isSep-b.isSep)||a.g.localeCompare(b.g,'ru',{numeric:true}));
+  // проверки
+  for(const m of MS){
+    if(m===EXCLUDED_MONTH)continue;
+    const t=!!S.tabel[m],r=!!S.report[m],p=!!S.payroll[m];
+    if((t||r)&&!(t&&r))add('warn','Месяцы',m,'Месяц не входит в расчёт: нет '+(!t?'детского табеля':'')+(!t&&!r?' и ':'')+(!r?'отчёта по часам':''));
+    if(t&&r&&!p)add('err','Месяцы',m,'Нет начислений РОУ за месяц','Стоимость за этот месяц нельзя считать установленной.');
+  }
+  if(!Object.keys(S.payroll).length&&months.length)add('err','Начисления',null,'Файл начислений не загружен','Без начислений стоимость часа не считается.');
+  for(const m of Object.keys(S.tabel)){
+    const T=S.tabel[m];
+    if(T.control!=null){const s=T.rows.reduce((a,r)=>a+r.tot,0);
+      if(Math.abs(s-T.control)>1)add('err','Детский табель',m,'Сумма минут в строках не совпадает с итогом файла','Строки: '+fmt(s,0)+', итог в файле: '+fmt(T.control,0)+'. Возможно, выгрузка неполная.');
+      else add('ok','Детский табель',m,'Итог файла сходится с суммой строк','('+fmt(s,0)+' мин)')}
+    if(T.bad.noName||T.bad.noGroup)add('warn','Детский табель',m,'Строки с пустыми значениями','Без ФИО ребёнка: '+T.bad.noName+', без группы: '+T.bad.noGroup);
+  }
+  for(const m of Object.keys(S.report)){
+    const R=S.report[m];
+    if(R.control&&R.control.fact!=null){
+      if(Math.abs(R.sumFact-R.control.fact)>1)add('err','Отчёт по часам',m,'Сумма минут (факт) не совпадает с итогом файла','Строки: '+fmt(R.sumFact,0)+', итог в файле: '+fmt(R.control.fact,0)+'. Возможно, выгрузка неполная.');
+      else add('ok','Отчёт по часам',m,'Итог файла сходится с суммой строк','('+fmt(R.sumFact,0)+' мин факт)')}
+    else add('warn','Отчёт по часам',m,'В файле нет итоговой строки «Всего минут», полноту выгрузки проверить нельзя');
+    if(R.outOfMonth)add('warn','Отчёт по часам',m,'Строки с датами другого месяца не учтены: '+R.outOfMonth);
+    const b=R.bad;
+    if(b.noDate||b.noFio||b.noCode||b.noHours||b.noType)add('warn','Отчёт по часам',m,'Строки с пустыми значениями','Без даты: '+b.noDate+', без ФИО: '+b.noFio+', без кода группы: '+b.noCode+', без типа занятия: '+b.noType+', часы взяты из минут: '+b.noHours);
+  }
+  // группы только в одном файле
+  for(const m of months){
+    const tg=new Set(S.tabel[m].rows.map(r=>r.group).filter(g=>classify(g)==='regular'));
+    const rg=new Set(S.report[m].rows.filter(r=>r.hrs>0&&r.type!=='CNS'&&classify(r.code)==='regular').map(r=>r.code));
+    const a=[...tg].filter(g=>!rg.has(g)&&G[g]&&G[g].bm[m]&&G[g].bm[m].child>0),b=[...rg].filter(g=>!tg.has(g));
+    if(a.length)add('warn','Группы',m,'Есть в табеле, нет занятий в отчёте по часам',a.join(', '));
+    if(b.length)add('warn','Группы',m,'Есть в отчёте по часам, нет детей в табеле',b.join(', '));
+  }
+  for(const g of allCodes)if(/^[А-Я]+$/.test(g)&&classify(g)==='regular')add('info','Коды групп',null,'Код «'+g+'» в ТЗ не описан, считается обычной группой'+(g==='БК'?' и выводится отдельно':''));
+  for(const e of Object.values(excl)){
+    add('info','Исключено из стоимости',e.m,CLS_NAME[e.cls],'Детские часы: '+fmt(e.child)+', часы педагогов в отчёте: '+fmt(e.rep)+(e.cls==='amb'||e.cls==='okped'||e.cls==='g05'||e.cls==='primary'?' (эти часы остаются в общем времени сотрудника)':''));
+  }
+  // начисления
+  const uniq=new Map();unmatched.forEach(u=>{const o=uniq.get(u.key)||{name:u.name,key:u.key,ms:[],h:0};o.ms.push(u.m);o.h+=u.regT;uniq.set(u.key,o)});
+  const unmatchedList=[...uniq.values()];
+  const payM=Object.keys(payMap);
+  if(payM.length)for(const u of unmatchedList)add('err','Нет начислений',null,u.name,'Регулярных часов '+fmt(u.h)+'; месяцы: '+u.ms.map(mShort).join(', ')+'. В файле начислений такой сотрудник не найден; возможно, ФИО записано иначе.');
+  const repAny=new Set(allRepKeys);
+  const payOnly=[];
+  for(const m of months){const P=payMap[m];if(!P)continue;for(const [k,v] of P.map)if(!repAny.has(k)&&!payOnly.some(p=>p.key===k))payOnly.push({key:k,name:v.names[0]})}
+  if(payOnly.length)add('info','Начисления',null,'Сотрудники из начислений без часов в отчёте: '+payOnly.length,payOnly.slice(0,40).map(p=>p.name).join('; ')+(payOnly.length>40?'…':''));
+  // алиасы
+  for(const g of ALIASES){
+    const keyC=nk(g[0]);const inRep=[...allRepKeys].includes(keyC);let inPay=false;for(const m of payM)if(payMap[m].map.has(keyC))inPay=true;
+    if(inRep||inPay)add(inRep&&inPay?'ok':'info','Сопоставление ФИО',null,g.join(' = '),inRep&&inPay?'Совпало в отчёте и в начислениях':(inRep?'Есть в отчёте, в начислениях не найдено':'Есть в начислениях, в отчёте не найдено'));
+  }
+  const bit=[...seenNames.values()].flatMap(s=>[...s]).filter(n=>/^Битова/i.test(n));
+  if(new Set(bit.map(nk)).size>1)add('info','Сопоставление ФИО',null,'Битова А. Л. и Битова В. А. — разные сотрудники','Не объединены.');
+  if(allOrgs().size)add('info','Начисления',null,'Начисления всех организаций суммируются: '+[...allOrgs()].sort().join(', '),'Если сотрудник получает деньги в нескольких организациях, суммы складываются по сотруднику.');
+  if(S.payrollOut.length)add('info','Начисления',null,'Месяцы вне периода в файле начислений не использованы: '+S.payrollOut.map(mShort).join(', '));
+  for(const [m,src] of Object.entries(S.payroll)){
+    if(src.dups&&src.dups.length)add('info','Начисления',m,'Месяц есть на нескольких листах файла начислений, взят лист «'+src.dups[0].to+'»','Строки не складываются, чтобы начисления не задвоились.');
+    const neg=src.rows.filter(r=>r.sum<0);
+    if(neg.length)add('warn','Начисления',m,'Отрицательные начисления: '+neg.length,neg.map(r=>r.name.trim()+' '+money(r.sum)).join('; ')+'. Они вычтены из суммы сотрудника.');
+  }
+  // сохранение долей
+  let viol=0;for(const e of empMonth)if(e.hasPay&&e.allocT>e.pay+0.005)viol++;
+  if(empMonth.length){if(viol)add('err','Распределение',null,'Отнесено больше, чем начислено у '+viol+' сотрудников','Проверьте часы в отчёте по часам.');else add('ok','Распределение',null,'Отнесённые начисления не превышают начисления ни у одного сотрудника','Проверено сотрудник-месяцев: '+empMonth.length)}
+  const sumPay=empMonth.filter(e=>e.hasPay).reduce((a,e)=>a+e.pay,0),sumAlloc=empMonth.filter(e=>e.hasPay).reduce((a,e)=>a+e.allocT,0);
+  return {months,selM,groups,dist,checks,unmatchedList,payOnly,payMap,summary:{sumPay,sumAlloc},empMonth};
 }
-for(let i=0;i<details.length;i++){const cell=det['A'+(i+5)];if(cell)cell.l={Target:"#'Итоги'!A7",Tooltip:'Вернуться к итогам'}}
-for(let i=0;i<sorted.length;i++){for(const col of ['B','C','D','E']){const cell=main[col+(i+7)];if(cell&&typeof cell.v==='number')cell.z=col==='E'?'0.0"%"':'#,##0.00'}}
-for(let i=0;i<details.length;i++){for(const col of ['D','E','F','G']){const cell=det[col+(i+5)];if(cell&&typeof cell.v==='number')cell.z='#,##0.00'}}
-const bytes=XLSX.write(wb,{bookType:'xlsx',type:'array'}),blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='CLP_для_Светы_'+(expected.length===10?'2025-2026':expected.length===1?expected[0]:'months_'+expected.length)+'.xlsx';link.style.display='none';document.body.appendChild(link);link.click();setTimeout(()=>{link.remove();URL.revokeObjectURL(url)},30000);
-$('message').textContent='Excel для Светы сформирован: Итоги, Расшифровка, Проверка данных.'
-}catch(e){$('message').textContent='Ошибка скачивания: '+e.message;console.error(e);alert('Не получилось создать Excel: '+e.message)}
+
+/* ---------- отрисовка ---------- */
+const ZONES=[
+  {k:'tabel',n:'',t:'Детский табель',h:'Месячные выгрузки, можно несколько файлов сразу'},
+  {k:'report',n:'',t:'Педагогические часы',h:'«Работа педагога за месяц с группами»'},
+  {k:'payroll',n:'',t:'Начисления РОУ',h:'ФИО, месяц и сумма начислений'}
+];
+function renderZones(){
+  $('#zones').innerHTML=ZONES.map(z=>{
+    let items;
+    if(z.k==='payroll'){const by={};Object.keys(S.payroll).sort().forEach(m=>(by[S.payroll[m].fileName]=by[S.payroll[m].fileName]||[]).push(m));
+      items=Object.entries(by).map(([f,ms])=>['F:'+f,f,ms.length>1?mShort(ms[0])+' – '+mShort(ms[ms.length-1])+' · '+ms.length+' мес.':mShort(ms[0])])}
+    else items=Object.keys(S[z.k]).sort().map(m=>[m,S[z.k][m].fileName,mShort(m)]);
+    return `<div class="zone" data-z="${z.k}">
+      <div class="top"><div><b>${z.t}</b><div class="hint">${z.h}</div></div>
+      <button class="btn sm" data-pick="${z.k}">Добавить</button></div>
+      <div class="files">${items.length?items.map(([m,f,lab])=>`<div class="file"><span title="${esc(f)}"><b>${esc(lab)}</b> · ${esc(f)}</span><button data-rm="${z.k}|${esc(m)}" aria-label="Убрать файл ${esc(f)}">×</button></div>`).join(''):'<div class="hint">Перетащите файлы сюда</div>'}</div>
+      <input type="file" id="in-${z.k}" accept=".xlsx,.xls" multiple hidden></div>`}).join('');
+  document.querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>$('#in-'+b.dataset.pick).click());
+  document.querySelectorAll('input[type=file]').forEach(i=>i.onchange=()=>{addFiles([...i.files],i.id.slice(3));i.value=''});
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{const i=b.dataset.rm.indexOf('|');removeFile(b.dataset.rm.slice(0,i),b.dataset.rm.slice(i+1))});
+  document.querySelectorAll('.zone').forEach(z=>{
+    z.ondragover=e=>{e.preventDefault();z.classList.add('drag')};z.ondragleave=()=>z.classList.remove('drag');
+    z.ondrop=e=>{e.preventDefault();z.classList.remove('drag');addFiles([...e.dataTransfer.files],z.dataset.z)};
+  });
 }
-$('run').addEventListener('click',run);$('message').textContent='Приложение готово. Добавьте отчёты и нажмите «Рассчитать».';$('reset').onclick=()=>location.reload();$('export').onclick=exportExcel;$('filter').oninput=render;$('direction').onchange=render;document.querySelectorAll('.tab').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active');state.tab=btn.dataset.tab;render()});
-</script></body></html>
+function renderMonths(R){
+  const inM=new Set(R.months);
+  $('#months').innerHTML=`<h2>Месяцы учебного года · октябрь 2025 исключён</h2><div class="mrow">${MS.map(m=>{
+    const t=!!S.tabel[m],r=!!S.report[m],p=!!S.payroll[m];
+    return `<div class="m ${inM.has(m)?'in':''}"><b>${mShort(m)}</b><div class="dots"><span class="dot ${t?'y':''}">${t?'✓':'–'} табель</span><span class="dot ${r?'y':''}">${r?'✓':'–'} часы</span><span class="dot ${p?'y':''}">${p?'✓':'–'} начисл.</span></div><span style="color:var(--muted)">${m===EXCLUDED_MONTH?'исключён':inM.has(m)?'в расчёте':(t||r?'нужны табель и часы':(p?'только начисления':'нет данных'))}</span></div>`}).join('')}</div>`;
+  const miss=MS.filter(m=>m!==EXCLUDED_MONTH&&!inM.has(m));
+  let html='';
+  if(!R.months.length)html='<div class="banner">Загрузите детский табель и отчёт по часам хотя бы за один месяц. Месяц входит в расчёт, когда есть оба файла.</div>';
+  else{
+    html=`<div class="banner ${miss.length?'':'ok'}">В расчёте ${R.months.length} из 9 месяцев (октябрь 2025 исключён): ${R.months.map(mShort).join(', ')}.${miss.length?' Нет данных: '+miss.map(mShort).join(', ')+'. Это не нули: итоги относятся только к загруженным месяцам.':''}</div>`;
+  }
+  $('#banner').innerHTML=html;
+}
+function statusPill(g){return `<span class="pill ${g.kind}">${esc(g.status)}</span>`}
+function costTable(R){
+  if(!R.months.length)return `<div class="panel"><div class="empty"><b>Здесь появится стоимость часа по группам</b>Добавьте детский табель, отчёт по часам и начисления. Таблица покажет детские часы, отнесённые начисления, стоимость часа, покрытие и статус каждой группы.</div></div>`;
+  const main=R.groups.filter(g=>!g.isSep),bk=R.groups.filter(g=>g.isSep);
+  const row=g=>`<tr class="click" data-g="${esc(g.g)}" tabindex="0"><td class="g">${esc(g.g)}</td><td class="n">${fmt(g.child)}</td><td class="n">${g.reg>0?money(g.alloc):'—'}</td>
+    <td class="n"><span class="cost ${g.kind==='ok'||g.isSep&&g.kind!=='warn'?'':'pre'}">${g.cost==null?'—':money(g.cost)}</span>${g.cost!=null&&g.kind==='warn'?'<div class="why">предварительно</div>':''}</td>
+    <td class="n">${g.cover==null?'—':fmt(g.cover*100,0)+'%'}<div class="why">${g.nMonths} мес.</div></td>
+    <td>${statusPill(g)}${g.reasons.length?`<div class="why">${esc(g.reasons.join('. '))}</div>`:''}</td>
+    <td class="n"><input type="checkbox" data-sep="${esc(g.g)}" ${g.isSep?'checked':''} aria-label="Показывать группу ${esc(g.g)} отдельно"></td></tr>`;
+  const ok=main.filter(g=>g.kind==='ok');const tC=ok.reduce((a,g)=>a+g.child,0),tA=ok.reduce((a,g)=>a+g.alloc,0);
+  const head='<thead><tr><th>Группа</th><th class="n">Детские часы</th><th class="n">Отнесённые начисления</th><th class="n">Стоимость часа</th><th class="n">Покрытие</th><th>Статус</th><th class="n" title="Не детская группа или малый объём данных: показывается отдельно и не входит в среднее">Отдельно</th></tr></thead>';
+  return `<div class="panel"><div class="tools"><h2>Стоимость детского часа по группам · ${S.period==='all'?'весь год':mFull(S.period)}</h2><span class="sp" style="flex:1"></span>
+    <label><input type="checkbox" id="optRG" ${S.opts.subRG?'checked':''}> Вычитать минуты РГ, как в колонке «Итого» табеля</label>
+    <label title="По умолчанию (как в ТЗ) время ок.пед. входит в общее время сотрудника, и его доля зарплаты на группы не переносится. С галочкой оно исключается из общего времени, и вся зарплата делится только между остальными видами работ."><input type="checkbox" id="optOK" ${S.opts.okped?'checked':''}> Относить ок.пед. на группы</label></div>
+    <div class="scroll"><table>${head}<tbody>${main.map(row).join('')}</tbody>
+    <tfoot><tr><td>Рассчитанные группы</td><td class="n">${fmt(tC)}</td><td class="n">${money(tA)}</td><td class="n">${tC>0?money(tA/tC):'—'}</td><td></td><td class="why">В среднем по группам со статусом «Рассчитано»</td><td></td></tr></tfoot></table></div>
+    ${S.period==='all'&&R.months.length>1?`<h2>По месяцам</h2><div class="scroll"><table><thead><tr><th>Группа</th>${R.months.map(m=>`<th class="n">${mShort(m)}</th>`).join('')}<th class="n">Все месяцы</th></tr></thead><tbody>${main.map(g=>`<tr><td class="g">${esc(g.g)}</td>${R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?`<td class="n"><span class="cost ${c.ok?'':'pre'}">${money(c.cost)}</span></td>`:'<td class="n">—</td>'}).join('')}<td class="n"><span class="cost ${g.kind==='ok'?'':'pre'}">${g.cost==null?'—':money(g.cost)}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Курсив: за месяц есть неполнота (нет начислений, часов занятий или детских часов). Итог за все месяцы считается как сумма отнесённых начислений, делённая на сумму детских часов.</p>`:''}
+    ${bk.length?`<h2>Показаны отдельно</h2><p class="note">Не детские группы или группы с малым объёмом данных. В итоговое среднее не входят. Список меняется галочкой «Отдельно» в таблице выше.</p><div class="scroll"><table>${head}<tbody>${bk.map(row).join('')}</tbody></table></div>`:''}
+    <p class="note">Это управленческая оценка по структуре учтённого времени. Начисления сотрудника делятся пропорционально часам регулярных занятий группы к общему времени сотрудника в отчёте по часам. Доля амбулатории, консультаций, подготовки и других работ не переносится на группы. Это не полная себестоимость: прочие расходы не включены. Строка с пометкой «предварительно» не является установленной стоимостью. Нажмите на строку, чтобы увидеть распределение.</p></div>`;
+}
+function distView(R){
+  if(!R.months.length)return `<div class="panel"><div class="empty"><b>Распределение пока пусто</b>Оно появится, когда будут загружены детский табель и отчёт по часам за один месяц или больше.</div></div>`;
+  const f=S.flt;let rows=R.dist.filter(r=>R.selM.includes(r.m)&&(!f.g||r.g===f.g)&&(!f.q||r.name.toLowerCase().includes(f.q.toLowerCase()))&&(!f.nopay||r.pay==null));
+  rows.sort((a,b)=>a.m.localeCompare(b.m)||a.g.localeCompare(b.g,'ru',{numeric:true})||a.name.localeCompare(b.name,'ru'));
+  const shown=rows.slice(0,1500);
+  const em=R.empMonth.filter(e=>e.hasPay&&R.selM.includes(e.m));
+  const pay=em.reduce((a,e)=>a+e.pay,0),al=em.reduce((a,e)=>a+e.allocT,0);
+  const gs=[...new Set(R.dist.filter(r=>R.selM.includes(r.m)).map(r=>r.g))].sort((a,b)=>a.localeCompare(b,'ru',{numeric:true}));
+  return `<div class="panel"><div class="cards">
+    <div class="card"><div class="v">${money(pay)}</div><div class="l">Начисления сотрудников с часами в отчёте</div></div>
+    <div class="card"><div class="v">${money(al)}</div><div class="l">Отнесено на регулярные группы</div></div>
+    <div class="card"><div class="v">${money(pay-al)}</div><div class="l">Вне основной стоимости: консультации, амбулатория, подготовка и прочее</div></div></div>
+    <div class="tools"><label>Группа <select id="fG"><option value="">Все</option>${gs.map(g=>`<option ${f.g===g?'selected':''}>${esc(g)}</option>`).join('')}</select></label>
+    <label>Педагог <input type="search" id="fQ" value="${esc(f.q)}" placeholder="Фамилия"></label>
+    <label><input type="checkbox" id="fN" ${f.nopay?'checked':''}> Только без начислений</label></div>
+    <div class="scroll"><table><thead><tr><th>Месяц</th><th>Группа</th><th>Педагог</th><th class="n">Все учтённые часы</th><th class="n">Часы занятий в группе</th><th class="n">Доля</th><th class="n">Начисления</th><th class="n">Отнесено</th></tr></thead><tbody>
+    ${shown.map(r=>`<tr><td>${mShort(r.m)}</td><td class="g">${esc(r.g)}</td><td>${esc(r.name)}</td><td class="n">${fmt(r.tot,2)}</td><td class="n">${fmt(r.reg,2)}</td><td class="n">${fmt(r.share*100,1)}%</td><td class="n">${r.pay==null?'<span class="pill err">нет</span>':money(r.pay)}</td><td class="n">${r.alloc==null?'—':money(r.alloc)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Нет строк по выбранным условиям</td></tr>'}
+    </tbody></table></div>${rows.length>shown.length?`<p class="note">Показаны первые 1500 из ${rows.length} строк. Полный список в Excel.</p>`:''}</div>`;
+}
+function checkView(R){
+  if(!R.checks.length&&!R.months.length)return `<div class="panel"><div class="empty"><b>Проверка данных</b>Здесь появятся пропуски, расхождения итогов, ошибки сопоставления ФИО и неполные выгрузки.</div></div>`;
+  const order={err:0,warn:1,info:2,ok:3};const cs=[...R.checks].sort((a,b)=>order[a.lvl]-order[b.lvl]);
+  const lab={err:'Ошибка',warn:'Внимание',info:'Сведения',ok:'Проверено'};
+  const pk={err:'err',warn:'warn',info:'info',ok:'ok'};
+  let map='';
+  if(Object.keys(S.payroll).length&&R.unmatchedList.length){
+    const all=new Map();Object.values(R.payMap).forEach(P=>P.map.forEach((v,k)=>all.set(k,v.names[0])));
+    const used=new Set([...R.empMonth.filter(e=>e.hasPay).map(e=>e.key)]);
+    const opts=[...all.entries()].filter(([k])=>!used.has(k)).sort((a,b)=>a[1].localeCompare(b[1],'ru'));
+    map=`<div class="sect"><h2>Сопоставить ФИО вручную</h2><p class="note">Программа не объединяет имена по догадке. Выберите сотрудника из файла начислений только если уверены, что это один человек.</p>
+    ${R.unmatchedList.map((u,i)=>{const sn=nk(u.name).replace(/[а-я]\.?$/,'').slice(0,5);const sorted=[...opts].sort((a,b)=>(nk(b[1]).startsWith(sn)?1:0)-(nk(a[1]).startsWith(sn)?1:0));
+      return `<div class="maprow"><label for="mm${i}">${esc(u.name)}</label><select id="mm${i}" data-mk="${esc(u.key)}"><option value="">— не сопоставлено —</option>${sorted.map(([k,n])=>`<option value="${esc(k)}">${esc(n)}</option>`).join('')}</select></div>`}).join('')}
+    </div>`;
+  }
+  if(Object.keys(MANUAL).length)map+=`<div class="tools"><span class="note">Ручных сопоставлений: ${Object.keys(MANUAL).length}</span><button class="btn ghost sm" id="mmReset">Сбросить</button></div>`;
+  return `<div class="panel">${map}<div class="sect"><h2>Результаты проверки</h2><div class="chk">${cs.map(c=>`<span class="pill ${pk[c.lvl]}">${lab[c.lvl]}</span><span class="sec">${esc(c.sec)}${c.month?' · '+mShort(c.month):''}</span><div>${esc(c.text)}${c.detail?`<div class="d">${esc(c.detail)}</div>`:''}</div>`).join('')||'<span></span><span></span><span class="d">Замечаний нет</span>'}</div></div></div>`;
+}
+let R=null;
+function render(){
+  R=compute();window._R=R;
+  renderZones();renderMonths(R);
+  const ne=R.checks.filter(c=>c.lvl==='err').length,nw=R.checks.filter(c=>c.lvl==='warn').length;
+  $('#tabs').innerHTML=[['cost','Стоимость часа'],['dist','Распределение начислений'],['chk','Проверка данных']].map(([k,t])=>`<button role="tab" aria-selected="${S.tab===k}" data-t="${k}">${t}${k==='chk'&&(ne||nw)?`<span class="badge ${ne?'err':'warn'}">${ne||nw}</span>`:''}</button>`).join('')+'<span class="sp"></span>'+(R.months.length?`<label class="per">Период <select id="per"><option value="all" ${S.period==='all'?'selected':''}>Весь год (${R.months.length} мес.)</option>${R.months.map(m=>`<option value="${m}" ${S.period===m?'selected':''}>${mFull(m)}</option>`).join('')}</select></label>`:'')+'<button class="btn sm" id="xl" '+(R.months.length?'':'disabled')+'>Скачать Excel</button>';
+  document.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;render()});
+  $('#xl').onclick=exportXlsx;const per=$('#per');if(per)per.onchange=()=>{S.period=per.value;render()};
+  const v=$('#view');
+  v.innerHTML=S.tab==='cost'?costTable(R):S.tab==='dist'?distView(R):checkView(R);
+  const ok2=$('#optOK');if(ok2)ok2.onchange=()=>{S.opts.okped=ok2.checked;render()};
+  const rg=$('#optRG');if(rg)rg.onchange=()=>{S.opts.subRG=rg.checked;render()};
+  v.querySelectorAll('input[data-sep]').forEach(i=>{i.onclick=e=>e.stopPropagation();i.onchange=()=>{i.checked?SEP.add(i.dataset.sep):SEP.delete(i.dataset.sep);saveSep();render()}});
+  v.querySelectorAll('tr[data-g]').forEach(tr=>{const go=()=>{S.flt.g=tr.dataset.g;S.tab='dist';render()};tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go()}});
+  const fm=$('#fG');if(fm){fm.onchange=e=>{S.flt.g=e.target.value;render()};
+    const q=$('#fQ');q.oninput=()=>{S.flt.q=q.value;clearTimeout(render.t);render.t=setTimeout(()=>{render();const n=$('#fQ');n.focus();n.setSelectionRange(n.value.length,n.value.length)},250)};
+    $('#fN').onchange=e=>{S.flt.nopay=e.target.checked;render()}}
+  v.querySelectorAll('select[data-mk]').forEach(s=>s.onchange=()=>{if(s.value){MANUAL[s.dataset.mk]=s.value}else delete MANUAL[s.dataset.mk];saveManual();render()});
+  const rs=$('#mmReset');if(rs)rs.onclick=()=>{MANUAL={};saveManual();render()};
+}
+
+/* ---------- Excel ---------- */
+async function saveFile(buf,name){
+  try{const dl=await (window.claude&&window.claude.use?window.claude.use('downloads'):null);
+    if(dl){await dl.save({filename:name,data:new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})});toast('Файл подготовлен: '+name);return}}
+  catch(e){if(e&&e.code==='declined')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf],{type:'application/octet-stream'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+async function exportXlsx(){
+  const R=window._R;if(!R||!R.months.length)return;
+  const C={teal:'FF0D6B73',soft:'FFD6ECEE',zebra:'FFF4F8F9',line:'FFD5DBDE',ink:'FF17252B',muted:'FF5A6A71',white:'FFFFFFFF',
+    ok:'FFD9F0E2',okT:'FF1D7A46',warn:'FFFBEBC4',warnT:'FF8A5A00',err:'FFF9DEDB',errT:'FFB3261E',info:'FFE9EDEF'};
+  const fill=argb=>({type:'pattern',pattern:'solid',fgColor:{argb}});
+  const thin={style:'thin',color:{argb:C.line}};
+  const wb=new ExcelJS.Workbook();wb.creator='ЦЛП';wb.title='Стоимость детского часа';wb.created=new Date();
+  const mk=n=>wb.addWorksheet(n,{properties:{tabColor:{argb:C.teal}},views:[{showGridLines:false}]});
+  const wc=mk('Стоимость часа'),wd=mk('Распределение'),wk=mk('Проверка данных');
+  const multi=S.period==='all'&&R.months.length>1;
+  const sel=R.selM;const miss=S.period==='all'?MS.filter(m=>m!==EXCLUDED_MONTH&&!R.months.includes(m)):[];
+  const periodTxt=S.period==='all'?'учтённые месяцы ('+sel.length+', без октября 2025)':mFull(S.period);
+  const mains=R.groups.filter(g=>!g.isSep),okG=mains.filter(g=>g.kind==='ok'),preG=mains.filter(g=>g.kind==='warn'),noG=mains.filter(g=>g.kind==='info');
+  const sepList=R.groups.filter(g=>g.isSep);
+  const stText=g=>g.isSep?(g.kind==='warn'?'Отдельно, предварительно':g.kind==='info'&&g.status!=='Отдельно'?g.status:'Отдельно'):g.kind==='ok'?'Рассчитано':g.kind==='warn'?'Предварительно':g.status;
+  const title=(ws,text,sub,lastCol)=>{
+    ws.mergeCells(1,1,1,lastCol);const t=ws.getCell(1,1);t.value=text;t.font={name:'Calibri',size:18,bold:true,color:{argb:C.teal}};ws.getRow(1).height=30;t.alignment={vertical:'middle'};
+    ws.mergeCells(2,1,2,lastCol);const u=ws.getCell(2,1);u.value=sub;u.font={name:'Calibri',size:11,color:{argb:C.muted}};
+  };
+  const head=(ws,row,from,to)=>{for(let c=from;c<=to;c++){const x=ws.getCell(row,c);x.font={name:'Calibri',bold:true,color:{argb:C.white}};x.fill=fill(C.teal);x.alignment={vertical:'middle',horizontal:'center',wrapText:true};x.border={bottom:thin}}ws.getRow(row).height=36};
+  const page=(ws,hdrRow,foot)=>{ws.pageSetup={orientation:'landscape',paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:0,printTitlesRow:hdrRow+':'+hdrRow,margins:{left:.4,right:.4,top:.5,bottom:.6,header:.3,footer:.3}};ws.headerFooter={oddFooter:'&L'+foot+'&RСтраница &P из &N'}};
+  const sub='ЦЛП · учебный год 2025–2026 · октябрь исключён · период: '+periodTxt;
+
+  /* ---- Распределение ---- */
+  const rows=R.dist.filter(r=>R.selM.includes(r.m)).sort((a,b)=>a.m.localeCompare(b.m)||a.g.localeCompare(b.g,'ru',{numeric:true})||a.name.localeCompare(b.name,'ru'));
+  const D0=5,DL=D0+rows.length-1;
+  title(wd,'Распределение начислений по группам',sub,9);
+  wd.mergeCells(3,1,3,9);const dn=wd.getCell(3,1);dn.value='Отнесено на группу = начисления сотрудника × часы регулярных занятий в группе ÷ все учтённые часы сотрудника за месяц. Остальная доля начислений (консультации, амбулатория, подготовка и другие работы) на группы не переносится.';
+  dn.font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};dn.alignment={wrapText:true,vertical:'top'};wd.getRow(3).height=30;
+  ['Месяц','Группа','Педагог',(S.opts.okped?'Учтённые часы за месяц без ок.пед.':'Все учтённые часы за месяц'),'Часы регулярных занятий в группе','Доля','Начисления сотрудника, ₽','Отнесено на группу, ₽','Примечание'].forEach((h,i)=>wd.getCell(4,i+1).value=h);
+  head(wd,4,1,9);
+  [14,10,32,16,18,9,18,18,34].forEach((w,i)=>wd.getColumn(i+1).width=w);
+  let band=0,prevM=null;
+  rows.forEach((r,i)=>{const n=D0+i;if(r.m!==prevM){band^=1;prevM=r.m}
+    const row=wd.getRow(n);
+    row.values=[mFull(r.m),r.g,r.name,r.tot,r.reg,{formula:`IF(D${n}>0,E${n}/D${n},0)`,result:r.share},r.pay,{formula:`IF(ISNUMBER(G${n}),G${n}*F${n},0)`,result:r.alloc||0},r.pay==null?'Нет начислений: в стоимость не вошло':''];
+    for(let c=1;c<=9;c++){const x=row.getCell(c);x.font={name:'Calibri',size:10,color:{argb:C.ink}};if(band)x.fill=fill(C.zebra);x.border={bottom:thin}}
+    row.getCell(2).numFmt='@';row.getCell(2).font={name:'Consolas',size:10,bold:true,color:{argb:C.ink}};
+    row.getCell(4).numFmt='#,##0.00';row.getCell(5).numFmt='#,##0.00';row.getCell(6).numFmt='0.0%';row.getCell(7).numFmt='#,##0';row.getCell(8).numFmt='#,##0';
+    if(r.pay==null){row.getCell(7).fill=fill(C.err);row.getCell(9).font={name:'Calibri',size:10,color:{argb:C.errT}}}
+  });
+  if(rows.length){wd.autoFilter={from:{row:4,column:1},to:{row:DL,column:9}}}
+  wd.views=[{showGridLines:false,state:'frozen',ySplit:4,xSplit:3}];
+  page(wd,4,'Распределение начислений');
+
+  /* ---- Стоимость часа ---- */
+  const nCols=7+(multi?R.months.length:0);const ML=7;
+  title(wc,'Стоимость детского часа регулярных занятий',sub,Math.max(7,nCols));
+  let row=4;
+  const block=(h,text)=>{
+    wc.mergeCells(row,1,row,7);const a=wc.getCell(row,1);a.value=h;a.font={name:'Calibri',bold:true,color:{argb:C.teal}};a.fill=fill(C.soft);row++;
+    wc.mergeCells(row,1,row,7);const b=wc.getCell(row,1);b.value=text;b.font={name:'Calibri',size:10.5,color:{argb:C.ink}};b.alignment={wrapText:true,vertical:'top'};
+    wc.getRow(row).height=Math.max(18,Math.ceil(text.length/150)*14.5+6);row++;
+  };
+  const orgs=[...allOrgs()].sort();
+  wc.getCell(row,1).value='Комментарий к расчёту';wc.mergeCells(row,1,row,7);wc.getCell(row,1).font={name:'Calibri',size:13,bold:true,color:{argb:C.ink}};row++;
+  block('Что показывает расчёт','Расходы Центра на оплату труда, приходящиеся на один детский час регулярных занятий, по каждой группе. Час работы педагога с пятью детьми — один педагогический час, но пять детских часов; в расчёте используются детские часы. Это управленческая оценка по структуре учтённого времени, а не полная себестоимость: прочие расходы Центра и начисления, которых нет в данных РОУ, сюда не входят.');
+  block('Как посчитано','Начисления сотрудника за месяц распределены по группам пропорционально доле его часов регулярных занятий в группе в общем учтённом времени за месяц (занятия, консультации, амбулатория, подготовка, технические часы и прочее). '+(S.opts.okped?'Время околопедагогической работы (ок.пед.), которое отдельно не оплачивается, исключено из общего времени сотрудника, поэтому его доля зарплаты распределена на группы пропорционально занятиям. ':'')+'Доля консультаций, амбулатории и других работ на группы не переносится. Стоимость часа = отнесённые начисления группы ÷ детские часы группы.'+(orgs.length>1?' Начисления сотрудника из разных организаций ('+orgs.join(', ')+') суммируются.':'')+' В стоимость не входят группы 05 и 05.1, первичный приём (П), околопедагогическая работа и амбулатория (11); группа 16-МЛ объединена с 16.'+(sepList.length?' Группы '+sepList.map(g=>g.g).join(', ')+' показаны отдельно (не детские группы или малый объём данных) и в итоговое среднее не входят.':''));
+  block('Данные','Период: '+periodTxt+'. Октябрь 2025 исключён полностью из расчёта из-за отсутствия корректного детского табеля. '+(miss.length?'Нет данных за: '+miss.map(mFull).join(', ')+'. Эти месяцы в расчёт не вошли и не считаются нулевыми. ':'')+'Источники: детский табель, отчёт по педагогическим часам, начисления РОУ. '+(S.opts.subRG?'Детские часы взяты по колонке «Итого» табеля (минуты РГ вычтены).':'Детские часы взяты как сумма минут по датам (минуты РГ не вычтены).'));
+  block('Насколько можно доверять цифрам','Полные данные по '+okG.length+' из '+mains.length+' групп (статус «Рассчитано»).'+(preG.length?' По '+preG.length+' группам стоимость предварительная: у части педагогов в файле начислений не найдены начисления, поэтому отнесённая сумма занижена. Такие строки выделены курсивом и не являются установленной стоимостью.':'')+(R.unmatchedList.length?' Педагогов без начислений: '+R.unmatchedList.length+', список на листе «Проверка данных».':'')+(noG.length?' Без расчёта: '+noG.map(g=>g.g).join(', ')+' (нет детских часов или часов занятий).':'')+' «Покрытие» — доля часов занятий группы, по которым найдены начисления.');
+  row++;
+  if(multi){wc.mergeCells(row,8,row,7+R.months.length);const mh=wc.getCell(row,8);mh.value='По месяцам, ₽';mh.font={name:'Calibri',bold:true,color:{argb:C.teal}};mh.fill=fill(C.soft);mh.alignment={horizontal:'center'}}
+  const H=row+1;
+  const hdrs=['Группа','Детские часы','Отнесённые начисления, ₽','Стоимость часа, ₽','Покрытие','Статус','Комментарий'].concat(multi?R.months.map(mShort):[]);
+  hdrs.forEach((h,i)=>wc.getCell(H,i+1).value=h);
+  head(wc,H,1,hdrs.length);
+  [12,13,19,16,11,16,50].forEach((w,i)=>wc.getColumn(i+1).width=w);
+  if(multi)R.months.forEach((m,j)=>wc.getColumn(8+j).width=11);
+  const G0=H+1,GL=G0+R.groups.length-1;
+  const ordered=[...mains,...sepList];
+  ordered.forEach((g,i)=>{const n=G0+i;const rw=wc.getRow(n);
+    rw.values=[g.g,g.child,{formula:`SUMPRODUCT((Распределение!$B$${D0}:$B$${DL}=A${n})*Распределение!$H$${D0}:$H$${DL})`,result:g.alloc},{formula:`IF(AND(B${n}>0,C${n}>0),C${n}/B${n},"")`,result:g.cost==null?'':g.cost},g.cover,stText(g),g.why||(g.isSep?'Показана отдельно, в итоговое среднее не входит':'')].concat(multi?R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?c.cost:null}):[]);
+    for(let c=1;c<=nCols;c++){const x=rw.getCell(c);x.font={name:'Calibri',color:{argb:C.ink}};if(i%2)x.fill=fill(C.zebra);x.border={bottom:thin};x.alignment={vertical:'middle'}}
+    const a=rw.getCell(1);a.numFmt='@';a.font={name:'Consolas',bold:true,color:{argb:C.ink}};a.alignment={vertical:'middle',horizontal:'left'};
+    rw.getCell(2).numFmt='#,##0.0';rw.getCell(3).numFmt='#,##0';rw.getCell(4).numFmt='#,##0';rw.getCell(5).numFmt='0%';
+    const pre=g.kind==='warn';
+    rw.getCell(4).font=pre?{name:'Calibri',italic:true,color:{argb:C.warnT}}:g.kind==='ok'?{name:'Calibri',bold:true,size:12,color:{argb:C.ink}}:{name:'Calibri',color:{argb:C.muted}};
+    if(pre)rw.getCell(5).font={name:'Calibri',color:{argb:C.warnT}};
+    const st=rw.getCell(6);st.alignment={horizontal:'center',vertical:'middle'};
+    const sc={ok:[C.ok,C.okT],warn:[C.warn,C.warnT],info:[C.info,C.muted]}[g.isSep?'info':g.kind];st.fill=fill(sc[0]);st.font={name:'Calibri',bold:true,size:10,color:{argb:sc[1]}};
+    const cm=rw.getCell(7);cm.font={name:'Calibri',size:10,color:{argb:C.muted}};cm.alignment={wrapText:true,vertical:'middle'};
+    if(g.why&&g.why.length>52)rw.height=30;
+    if(multi)R.months.forEach((m,j)=>{const x=rw.getCell(8+j);x.numFmt='#,##0';x.alignment={horizontal:'right',vertical:'middle'};const c=g.perM[m];if(c&&!c.ok&&c.cost!=null)x.font={name:'Calibri',italic:true,color:{argb:C.warnT}}});
+  });
+  // итог
+  const T=GL+1;const okR=okG.reduce((a,g)=>({c:a.c+g.child,a:a.a+g.alloc}),{c:0,a:0});
+  const tr=wc.getRow(T);tr.values=['Итого по группам со статусом «Рассчитано»',{formula:`SUMIF($F$${G0}:$F$${GL},"Рассчитано",B${G0}:B${GL})`,result:okR.c},{formula:`SUMIF($F$${G0}:$F$${GL},"Рассчитано",C${G0}:C${GL})`,result:okR.a},{formula:`IF(B${T}>0,C${T}/B${T},"")`,result:okR.c>0?okR.a/okR.c:''}];
+  wc.mergeCells(T,5,T,7);
+  for(let c=1;c<=7;c++){const x=tr.getCell(c);x.font={name:'Calibri',bold:true,color:{argb:C.ink}};x.fill=fill(C.soft);x.border={top:{style:'medium',color:{argb:C.teal}}}}
+  tr.getCell(1).alignment={wrapText:true,vertical:'middle'};tr.height=32;
+  tr.getCell(2).numFmt='#,##0.0';tr.getCell(3).numFmt='#,##0';tr.getCell(4).numFmt='#,##0';
+  wc.getCell(T,5).value='Среднее по группам с полными данными';wc.getCell(T,5).font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};wc.getCell(T,5).alignment={vertical:'middle',horizontal:'right'};
+  if(multi&&R.groups.length>0){wc.addConditionalFormatting({ref:`H${G0}:${wc.getColumn(7+R.months.length).letter}${GL}`,rules:[{type:'colorScale',cfvo:[{type:'min'},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FF9FD3D8'}]}]})}
+  let lg=T+2;
+  wc.mergeCells(lg,1,lg,7);wc.getCell(lg,1).value='Обозначения: зелёный статус — данные полные; жёлтый статус и курсив — предварительная оценка, начисления найдены не для всех педагогов; серый — расчёт невозможен или группа показана отдельно.';
+  wc.getCell(lg,1).font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};wc.getCell(lg,1).alignment={wrapText:true,vertical:'top'};wc.getRow(lg).height=30;
+  wc.autoFilter={from:{row:H,column:1},to:{row:GL,column:hdrs.length}};
+  wc.views=[{showGridLines:false,state:'frozen',ySplit:H,xSplit:1}];
+  page(wc,H,'Управленческая оценка, не полная себестоимость');
+
+  /* ---- Проверка данных ---- */
+  const order={err:0,warn:1,info:2,ok:3};const lab={err:'Ошибка',warn:'Внимание',info:'Сведения',ok:'Проверено'};
+  const cnt={err:0,warn:0,info:0,ok:0};R.checks.forEach(c=>cnt[c.lvl]++);
+  title(wk,'Проверка данных',sub,5);
+  [['err','Ошибки'],['warn','Внимание'],['info','Сведения'],['ok','Проверено']].forEach(([k,t],i)=>{const x=wk.getCell(3,i+1);x.value=t+': '+cnt[k];const sc={err:[C.err,C.errT],warn:[C.warn,C.warnT],info:[C.info,C.muted],ok:[C.ok,C.okT]}[k];x.fill=fill(sc[0]);x.font={name:'Calibri',bold:true,color:{argb:sc[1]}};x.alignment={horizontal:'center'}});
+  ['Уровень','Раздел','Месяц','Описание','Детали'].forEach((h,i)=>wk.getCell(5,i+1).value=h);
+  head(wk,5,1,5);wk.getRow(5).height=24;
+  [14,26,16,62,78].forEach((w,i)=>wk.getColumn(i+1).width=w);
+  const cs=[...R.checks].sort((a,b)=>order[a.lvl]-order[b.lvl]);
+  cs.forEach((c,i)=>{const n=6+i;const rw=wk.getRow(n);rw.values=[lab[c.lvl],c.sec,c.month?mFull(c.month):'',c.text,c.detail];
+    for(let k=1;k<=5;k++){const x=rw.getCell(k);x.font={name:'Calibri',size:10,color:{argb:C.ink}};x.alignment={wrapText:true,vertical:'top'};x.border={bottom:thin};if(i%2)x.fill=fill(C.zebra)}
+    const sc={err:[C.err,C.errT],warn:[C.warn,C.warnT],info:[C.info,C.muted],ok:[C.ok,C.okT]}[c.lvl];const a=rw.getCell(1);a.fill=fill(sc[0]);a.font={name:'Calibri',size:10,bold:true,color:{argb:sc[1]}};a.alignment={horizontal:'center',vertical:'top'};
+    rw.height=Math.max(1,Math.ceil(c.text.length/60),Math.ceil((c.detail||'').length/76))*13.5+4;
+  });
+  if(cs.length)wk.autoFilter={from:{row:5,column:1},to:{row:5+cs.length,column:5}};
+  wk.views=[{showGridLines:false,state:'frozen',ySplit:5}];
+  page(wk,5,'Проверка данных');
+  const buf=await wb.xlsx.writeBuffer();
+  await saveFile(buf,'Стоимость_детского_часа_'+(S.period==='all'?'год':S.period)+'.xlsx');
+}
+
+window.__app={S,compute,render,addFiles,exportXlsx,parseTabel,parseReport,parsePayroll};
+render();
+})();
+</script>
+
+</body></html>
