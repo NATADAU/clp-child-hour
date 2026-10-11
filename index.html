@@ -211,7 +211,7 @@ const saveManual=()=>{try{localStorage.setItem('cch-manual',JSON.stringify(MANUA
 const repKey=name=>{const c=canon(name);return MANUAL[c]||c};
 
 /* ---------- состояние ---------- */
-const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true,okped:false},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
+const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
 
 /* ---------- разбор файлов ---------- */
 function sheetsOf(buf){
@@ -437,10 +437,11 @@ function compute(){
       allCodes.add(r.code);
       const key=repKey(r.fio);allRepKeys.add(key);
       if(!seenNames.has(key))seenNames.set(key,new Set());seenNames.get(key).add(r.fio);
-      const e=E[key]||(E[key]={key,name:r.fio,tot:0,okp:0,regByG:{}});
+      const e=E[key]||(E[key]={key,name:r.fio,tot:0,okp:0,standalone:0,regByG:{}});
       e.tot+=r.hrs;
       const cls=classify(r.code);
       if(cls==='okped')e.okp+=r.hrs;
+      if(r.type==='CNS'||cls==='amb'||cls==='g05'||cls==='primary')e.standalone+=r.hrs;
       if(r.type==='CNS'||cls!=='regular'){
         if(cls!=='regular'){const k=cls+'|'+m;(excl[k]=excl[k]||{cls,m,child:0,rep:0}).rep+=r.hrs}
         continue;
@@ -451,7 +452,9 @@ function compute(){
       const pe=P?P.map.get(e.key):null;const pay=pe?pe.sum:null;
       let regT=0,allocT=0;
       for(const [g,reg] of Object.entries(e.regByG)){
-        const den=S.opts.okped?e.tot-e.okp:e.tot;const share=den>0?reg/den:0;const alloc=pay==null?null:pay*share;
+        // Preparation and supporting time is absorbed into delivery; standalone services retain their share.
+        const direct=Object.values(e.regByG).reduce((a,h)=>a+h,0);
+        const den=direct+e.standalone;const share=den>0?reg/den:0;const alloc=pay==null?null:pay*share;
         regT+=reg;if(alloc!=null)allocT+=alloc;
         const b=gm(g,m);b.reg+=reg;if(pay!=null){b.regCov+=reg;b.alloc+=alloc}
         gget(g).names.add(e.name);
@@ -624,12 +627,12 @@ function costTable(R){
   const head='<thead><tr><th>Группа</th><th>Руководитель</th><th class="n">Детские часы</th><th class="n">Отнесённые начисления</th><th class="n">Стоимость часа</th><th class="n">Покрытие</th><th>Статус</th><th class="n" title="Не детская группа или малый объём данных: показывается отдельно и не входит в среднее">Отдельно</th></tr></thead>';
   return `<div class="panel"><div class="tools"><h2>Стоимость детского часа по группам · ${S.period==='all'?'весь год':mFull(S.period)}</h2><span class="sp" style="flex:1"></span>
     <label><input type="checkbox" id="optRG" ${S.opts.subRG?'checked':''}> Вычитать минуты РГ, как в колонке «Итого» табеля</label>
-    <label title="По умолчанию (как в ТЗ) время ок.пед. входит в общее время сотрудника, и его доля зарплаты на группы не переносится. С галочкой оно исключается из общего времени, и вся зарплата делится только между остальными видами работ."><input type="checkbox" id="optOK" ${S.opts.okped?'checked':''}> Относить ок.пед. на группы</label></div>
+    <span class="note">Подготовка и сопутствующая работа учтены в распределении зарплаты</span></div>
     <div class="scroll"><table>${head}<tbody>${main.map(row).join('')}</tbody>
     <tfoot><tr><td>Рассчитанные группы</td><td></td><td class="n">${fmt(tC)}</td><td class="n">${money(tA)}</td><td class="n">${tC>0?money(tA/tC):'—'}</td><td></td><td class="why">В среднем по группам со статусом «Рассчитано»</td><td></td></tr></tfoot></table></div>
     ${S.period==='all'&&R.months.length>1?`<h2>По месяцам</h2><div class="scroll"><table><thead><tr><th>Группа</th>${R.months.map(m=>`<th class="n">${mShort(m)}</th>`).join('')}<th class="n">Все месяцы</th></tr></thead><tbody>${main.map(g=>`<tr><td class="g">${esc(g.g)}</td>${R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?`<td class="n"><span class="cost ${c.ok?'':'pre'}">${money(c.cost)}</span></td>`:'<td class="n">—</td>'}).join('')}<td class="n"><span class="cost ${g.kind==='ok'?'':'pre'}">${g.cost==null?'—':money(g.cost)}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Курсив: за месяц есть неполнота (нет начислений, часов занятий или детских часов). Итог за все месяцы считается как сумма отнесённых начислений, делённая на сумму детских часов.</p>`:''}
     ${bk.length?`<h2>Показаны отдельно</h2><p class="note">Не детские группы или группы с малым объёмом данных. В итоговое среднее не входят. Список меняется галочкой «Отдельно» в таблице выше.</p><div class="scroll"><table>${head}<tbody>${bk.map(row).join('')}</tbody></table></div>`:''}
-    <p class="note">Это управленческая оценка по структуре учтённого времени. Начисления сотрудника делятся пропорционально часам регулярных занятий группы к общему времени сотрудника в отчёте по часам. Доля амбулатории, консультаций, подготовки и других работ не переносится на группы. Это не полная себестоимость: прочие расходы не включены. Строка с пометкой «предварительно» не является установленной стоимостью. Нажмите на строку, чтобы увидеть распределение.</p></div>`;
+    <p class="note">Это управленческая оценка по структуре учтённого времени. Начисления сотрудника делятся пропорционально часам регулярных занятий группы к общему времени сотрудника в отчёте по часам. Подготовка и сопутствующая работа распределяются между занятиями и самостоятельными направлениями пропорционально часам их непосредственного оказания. Это не полная себестоимость: прочие расходы не включены. Строка с пометкой «предварительно» не является установленной стоимостью. Нажмите на строку, чтобы увидеть распределение.</p></div>`;
 }
 function distView(R){
   if(!R.months.length)return `<div class="panel"><div class="empty"><b>Распределение пока пусто</b>Оно появится, когда будут загружены детский табель и отчёт по часам за один месяц или больше.</div></div>`;
@@ -642,11 +645,11 @@ function distView(R){
   return `<div class="panel"><div class="cards">
     <div class="card"><div class="v">${money(pay)}</div><div class="l">Начисления сотрудников с часами в отчёте</div></div>
     <div class="card"><div class="v">${money(al)}</div><div class="l">Отнесено на регулярные группы</div></div>
-    <div class="card"><div class="v">${money(pay-al)}</div><div class="l">Вне основной стоимости: консультации, амбулатория, подготовка и прочее</div></div></div>
+    <div class="card"><div class="v">${money(pay-al)}</div><div class="l">Вне групп: самостоятельные направления и нераспределённые начисления</div></div></div>
     <div class="tools"><label>Группа <select id="fG"><option value="">Все</option>${gs.map(g=>`<option ${f.g===g?'selected':''}>${esc(g)}</option>`).join('')}</select></label>
     <label>Педагог <input type="search" id="fQ" value="${esc(f.q)}" placeholder="Фамилия"></label>
     <label><input type="checkbox" id="fN" ${f.nopay?'checked':''}> Только без начислений</label></div>
-    <div class="scroll"><table><thead><tr><th>Месяц</th><th>Группа</th><th>Педагог</th><th class="n">Все учтённые часы</th><th class="n">Часы занятий в группе</th><th class="n">Доля</th><th class="n">Начисления</th><th class="n">Отнесено</th></tr></thead><tbody>
+    <div class="scroll"><table><thead><tr><th>Месяц</th><th>Группа</th><th>Педагог</th><th class="n">Часы базы распределения</th><th class="n">Часы занятий в группе</th><th class="n">Доля</th><th class="n">Начисления</th><th class="n">Отнесено</th></tr></thead><tbody>
     ${shown.map(r=>`<tr><td>${mShort(r.m)}</td><td class="g">${esc(r.g)}</td><td>${esc(r.name)}</td><td class="n">${fmt(r.tot,2)}</td><td class="n">${fmt(r.reg,2)}</td><td class="n">${fmt(r.share*100,1)}%</td><td class="n">${r.pay==null?'<span class="pill err">нет</span>':money(r.pay)}</td><td class="n">${r.alloc==null?'—':money(r.alloc)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Нет строк по выбранным условиям</td></tr>'}
     </tbody></table></div>${rows.length>shown.length?`<p class="note">Показаны первые 1500 из ${rows.length} строк. Полный список в Excel.</p>`:''}</div>`;
 }
@@ -678,7 +681,7 @@ function render(){
   $('#xl').onclick=exportXlsx;const per=$('#per');if(per)per.onchange=()=>{S.period=per.value;render()};
   const v=$('#view');
   v.innerHTML=S.tab==='cost'?costTable(R):S.tab==='dist'?distView(R):checkView(R);
-  const ok2=$('#optOK');if(ok2)ok2.onchange=()=>{S.opts.okped=ok2.checked;render()};
+  
   const rg=$('#optRG');if(rg)rg.onchange=()=>{S.opts.subRG=rg.checked;render()};
   v.querySelectorAll('input[data-sep]').forEach(i=>{i.onclick=e=>e.stopPropagation();i.onchange=()=>{i.checked?SEP.add(i.dataset.sep):SEP.delete(i.dataset.sep);saveSep();render()}});
   v.querySelectorAll('tr[data-g]').forEach(tr=>{const go=()=>{S.flt.g=tr.dataset.g;S.tab='dist';render()};tr.onclick=go;tr.onkeydown=e=>{if(e.key==='Enter')go()}});
@@ -723,9 +726,9 @@ async function exportXlsx(){
   const rows=R.dist.filter(r=>R.selM.includes(r.m)).sort((a,b)=>a.m.localeCompare(b.m)||a.g.localeCompare(b.g,'ru',{numeric:true})||a.name.localeCompare(b.name,'ru'));
   const D0=5,DL=D0+rows.length-1;
   title(wd,'Распределение начислений по группам',sub,9);
-  wd.mergeCells(3,1,3,9);const dn=wd.getCell(3,1);dn.value='Отнесено на группу = начисления сотрудника × часы регулярных занятий в группе ÷ все учтённые часы сотрудника за месяц. Остальная доля начислений (консультации, амбулатория, подготовка и другие работы) на группы не переносится.';
+  wd.mergeCells(3,1,3,9);const dn=wd.getCell(3,1);dn.value='Отнесено на группу = все начисления сотрудника × часы занятий в группе ÷ (часы всех регулярных занятий + часы самостоятельных направлений). Подготовка и сопутствующая работа включаются пропорционально. Амбулатория, первичный приём, группы 05 и консультации учитываются отдельно.';
   dn.font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};dn.alignment={wrapText:true,vertical:'top'};wd.getRow(3).height=30;
-  ['Месяц','Группа','Педагог',(S.opts.okped?'Учтённые часы за месяц без ок.пед.':'Все учтённые часы за месяц'),'Часы регулярных занятий в группе','Доля','Начисления сотрудника, ₽','Отнесено на группу, ₽','Примечание'].forEach((h,i)=>wd.getCell(4,i+1).value=h);
+  ['Месяц','Группа','Педагог','Часы для распределения (занятия + самостоятельные направления)','Часы регулярных занятий в группе','Доля','Начисления сотрудника, ₽','Отнесено на группу, ₽','Примечание'].forEach((h,i)=>wd.getCell(4,i+1).value=h);
   head(wd,4,1,9);
   [14,10,32,16,18,9,18,18,34].forEach((w,i)=>wd.getColumn(i+1).width=w);
   let band=0,prevM=null;
@@ -753,7 +756,7 @@ async function exportXlsx(){
   const orgs=[...allOrgs()].sort();
   wc.getCell(row,1).value='Комментарий к расчёту';wc.mergeCells(row,1,row,8);wc.getCell(row,1).font={name:'Calibri',size:13,bold:true,color:{argb:C.ink}};row++;
   block('Что показывает расчёт','Расходы Центра на оплату труда, приходящиеся на один детский час регулярных занятий, по каждой группе. Час работы педагога с пятью детьми — один педагогический час, но пять детских часов; в расчёте используются детские часы. Это управленческая оценка по структуре учтённого времени, а не полная себестоимость: прочие расходы Центра и начисления, которых нет в данных РОУ, сюда не входят.');
-  block('Как посчитано','Начисления сотрудника за месяц распределены по группам пропорционально доле его часов регулярных занятий в группе в общем учтённом времени за месяц (занятия, консультации, амбулатория, подготовка, технические часы и прочее). '+(S.opts.okped?'Время околопедагогической работы (ок.пед.), которое отдельно не оплачивается, исключено из общего времени сотрудника, поэтому его доля зарплаты распределена на группы пропорционально занятиям. ':'')+'Доля консультаций, амбулатории и других работ на группы не переносится. Стоимость часа = отнесённые начисления группы ÷ детские часы группы.'+(orgs.length>1?' Начисления сотрудника из разных организаций ('+orgs.join(', ')+') суммируются.':'')+' В стоимость не входят группы 05 и 05.1, первичный приём (П), околопедагогическая работа и амбулатория (11); группа 16-МЛ объединена с 16.'+(sepList.length?' Группы '+sepList.map(g=>g.g).join(', ')+' показаны отдельно (не детские группы или малый объём данных) и в итоговое среднее не входят.':''));
+  block('Как посчитано','Все начисления педагога распределяются между регулярными занятиями и самостоятельными направлениями пропорционально времени непосредственной работы в каждом направлении. Подготовка, документация и околопедагогическая работа включены в это распределение. Часть начислений, соответствующая амбулатории, первичному приёму, группе 05 и консультациям, на регулярные группы не переносится. Стоимость часа = отнесённые начисления группы ÷ детские часы группы.'+(orgs.length>1?' Начисления сотрудника из разных организаций ('+orgs.join(', ')+') суммируются.':'')+' В стоимость не входят группы 05 и 05.1, первичный приём (П), околопедагогическая работа и амбулатория (11); группа 16-МЛ объединена с 16.'+(sepList.length?' Группы '+sepList.map(g=>g.g).join(', ')+' показаны отдельно (не детские группы или малый объём данных) и в итоговое среднее не входят.':''));
   block('Данные','Период: '+periodTxt+'. Октябрь 2025 полностью исключён из расчёта из-за отсутствия корректного детского табеля. '+(Object.keys(S.leaders).length?'Руководители групп — по таблице распределения педагогических часов'+(Object.keys(S.leaders).filter(m=>m!=='0000-00').length?' за '+Object.keys(S.leaders).sort().filter(m=>m!=='0000-00').map(mFull).join(', '):'')+'. ':'')+(miss.length?'Нет данных за: '+miss.map(mFull).join(', ')+'. Эти месяцы в расчёт не вошли и не считаются нулевыми. ':'')+'Источники: детский табель, отчёт по педагогическим часам, начисления РОУ. '+(S.opts.subRG?'Детские часы взяты по колонке «Итого» табеля (минуты РГ вычтены).':'Детские часы взяты как сумма минут по датам (минуты РГ не вычтены).'));
   block('Насколько можно доверять цифрам','Полные данные по '+okG.length+' из '+mains.length+' групп (статус «Рассчитано»).'+(preG.length?' По '+preG.length+' группам стоимость предварительная: у части педагогов в файле начислений не найдены начисления, поэтому отнесённая сумма занижена. Такие строки выделены курсивом и не являются установленной стоимостью.':'')+(R.unmatchedList.length?' Педагогов без начислений: '+R.unmatchedList.length+', список на листе «Проверка данных».':'')+(noG.length?' Без расчёта: '+noG.map(g=>g.g).join(', ')+' (нет детских часов или часов занятий).':'')+' «Покрытие» — доля часов занятий группы, по которым найдены начисления.');
   row++;
