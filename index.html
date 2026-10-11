@@ -73,6 +73,7 @@ td.n,th.n{text-align:right;white-space:nowrap}
 tr.click{cursor:pointer} tr.click:hover td{background:var(--surface-2)}
 td.g{font-family:var(--mono);font-weight:500;white-space:nowrap}
 .cost{font-weight:600}
+td.ld{white-space:nowrap;color:var(--muted)}
 .cost.pre{font-weight:400;font-style:italic;color:var(--muted)}
 .pill{display:inline-block;border-radius:10px;padding:1px 9px;font-size:12px;white-space:nowrap}
 .pill.ok{background:var(--ok-soft);color:var(--ok)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
@@ -135,7 +136,7 @@ const fmt=(n,d=1)=>(n==null||isNaN(n))?'—':n.toLocaleString('ru-RU',{minimumFr
 const money=n=>(n==null||isNaN(n))?'—':n.toLocaleString('ru-RU',{maximumFractionDigits:0})+' ₽';
 const keyOf=(y,m)=>y+'-'+String(m).padStart(2,'0');
 const MS=[];for(let i=0;i<10;i++){MS.push(keyOf(i<4?2025:2026,(8+i)%12+1));}
-const EXCLUDED_MONTH='2025-10'; // Исключён: отсутствует корректный детский табель
+const EXCLUDED_MONTH='2025-10'; // Октябрь 2025 исключён: нет корректного детского табеля
 const RU_FULL=['','Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 const RU_SHORT=['','янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
 const mFull=k=>{const [y,m]=k.split('-');return RU_FULL[+m]+' '+y};
@@ -210,7 +211,7 @@ const saveManual=()=>{try{localStorage.setItem('cch-manual',JSON.stringify(MANUA
 const repKey=name=>{const c=canon(name);return MANUAL[c]||c};
 
 /* ---------- состояние ---------- */
-const S={tabel:{},report:{},payroll:{},opts:{subRG:true,okped:false},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
+const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true,okped:false},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
 
 /* ---------- разбор файлов ---------- */
 function sheetsOf(buf){
@@ -221,6 +222,7 @@ function detectKind(rows){
   const flat=rows.slice(0,60).map(r=>r.map(normH));
   if(flat.some(r=>r.includes('фио специалиста'))&&flat.some(r=>r.some(c=>c.startsWith('минут занятия'))))return 'report';
   if(flat.some(r=>r[0]==='фамилия имя'))return 'tabel';
+  if(flat.some(r=>r[1]==='код группы')&&flat.some(r=>r.some(c=>c.includes('руководител'))))return 'leaders';
   return null;
 }
 function parseTabel(rows,fname){
@@ -277,6 +279,24 @@ function parseReport(rows,fname){
   const inM=rowsOut.filter(x=>x.k===mk),out=rowsOut.length-inM.length;
   return {month:mk,rows:inM,outOfMonth:out,control,sumFact:rowsOut.reduce((a,x)=>a+x.fact,0),bad,fileName:fname};
 }
+function parseLeaders(rows,fname){
+  const hi=rows.findIndex(r=>normH(r[1])==='код группы');
+  if(hi<0)throw new Error('Не найдена строка «Код группы»');
+  const codes=rows[hi];let ln=-1,best=0;
+  for(let k=hi-1;k>=0;k--){const c=rows[k].filter((v,j)=>j>=4&&typeof v==='string'&&v.trim()).length;if(c>best){best=c;ln=k}}
+  if(ln<0)throw new Error('Не найдена строка с ФИО руководителей групп');
+  let mk=null;for(let i=0;i<hi&&!mk;i++)for(const c of rows[i])if(typeof c==='string'&&!mk)mk=parseMonth(c);
+  if(!mk)mk=monthFromName(fname);
+  const map={};
+  for(let j=4;j<codes.length;j++){
+    const code=normCode(codes[j]);if(!code||classify(code)!=='regular')continue;
+    const nm=String(rows[ln][j]==null?'':rows[ln][j]).replace(/\s+/g,' ').trim();
+    if(!/[А-ЯЁа-яё]\./.test(nm))continue;
+    map[code]=nm;
+  }
+  if(!Object.keys(map).length)throw new Error('Руководители групп не найдены');
+  return {month:mk,map,fileName:fname};
+}
 function toMoney(v){return num(v)}
 function parsePayroll(sheets,fname){
   const fileM=monthFromName(fname);let layout=null;const per=[];
@@ -326,10 +346,11 @@ async function addFiles(files,zone){
       let kind=null,sh=null;
       for(const s of sheets){const k=detectKind(s.rows);if(k){kind=k;sh=s;break}}
       if(!kind&&zone==='payroll')kind='payroll';
-      if(!kind)throw new Error('Файл не похож ни на детский табель, ни на отчёт по часам');
-      if(kind!==zone)toast('«'+f.name+'» распознан как '+({tabel:'детский табель',report:'отчёт по часам',payroll:'начисления'}[kind])+' и добавлен туда');
+      if(!kind)throw new Error('Файл не похож ни на детский табель, ни на отчёт по часам, ни на таблицу руководителей групп');
+      if(kind!==zone)toast('«'+f.name+'» распознан как '+({tabel:'детский табель',report:'отчёт по часам',payroll:'начисления',leaders:'руководители групп'}[kind])+' и добавлен туда');
       if(kind==='tabel'){const p=parseTabel(sh.rows,f.name);place('tabel',p)}
       else if(kind==='report'){const p=parseReport(sh.rows,f.name);place('report',p)}
+      else if(kind==='leaders'){const p=parseLeaders(sh.rows,f.name);S.leaders[p.month||'0000-00']=p;toast('Руководители групп: '+Object.keys(p.map).length+' групп из «'+f.name+'»')}
       else{
         const p=parsePayroll(sheets,f.name);
         if(p){placePayroll(p)}else{S.pending={sheets,fname:f.name};openMapping();}
@@ -400,7 +421,7 @@ function compute(){
   }
   const G={};const gget=g=>G[g]||(G[g]={g,child:0,reg:0,regCov:0,alloc:0,bm:{},names:new Set()});
   const gm=(g,m)=>{const x=gget(g);return x.bm[m]||(x.bm[m]={child:0,reg:0,regCov:0,alloc:0})};
-  const dist=[],checks=[{lvl:'info',sec:'Период',month:EXCLUDED_MONTH,text:'Октябрь 2025 исключён из расчёта',detail:'Нет корректного детского табеля; детские и педагогические часы и начисления октября не учтены.'}],excl={},unmatched=[],empMonth=[];
+  const dist=[],checks=[{lvl:'info',sec:'Период',month:EXCLUDED_MONTH,text:'Октябрь 2025 исключён из расчёта',detail:'Отсутствует корректный детский табель; октябрьские часы и начисления не используются.'}],excl={},unmatched=[],empMonth=[];
   const add=(lvl,sec,month,text,detail)=>checks.push({lvl,sec,month,text,detail:detail||''});
   const seenNames=new Map(),allRepKeys=new Set(),allCodes=new Set();
   for(const m of months){
@@ -440,6 +461,8 @@ function compute(){
       if(pay==null&&regT>0)unmatched.push({m,key:e.key,name:e.name,regT,tot:e.tot,noMonth:!P});
     }
   }
+  const leaderOf={};
+  Object.keys(S.leaders).sort().forEach(m=>{for(const [c,n] of Object.entries(S.leaders[m].map)){const a=leaderOf[c]||(leaderOf[c]=[]);if(!a.includes(n))a.push(n)}});
   const groups=[];
   if(S.period!=='all'&&!months.includes(S.period))S.period='all';
   const selM=S.period==='all'?months:[S.period];
@@ -472,7 +495,7 @@ function compute(){
     const cover=x.reg>0?x.regCov/x.reg:null;
     const cost=(x.child>0&&x.reg>0)?x.alloc/x.child:null;
     if(SEP.has(x.g)&&kind==='ok'){status='Отдельно';kind='info';reasons.push('Показана отдельно, в среднее не входит')}
-    groups.push({why,perM,g:x.g,child:x.child,alloc:x.alloc,cost,cover,reg:x.reg,nMonths:Object.keys(x.bm).length,status,kind,reasons,isSep:SEP.has(x.g),teachers:x.names.size});
+    groups.push({leader:(leaderOf[x.g]||[]).join(', '),why,perM,g:x.g,child:x.child,alloc:x.alloc,cost,cover,reg:x.reg,nMonths:Object.keys(x.bm).length,status,kind,reasons,isSep:SEP.has(x.g),teachers:x.names.size});
   }
   groups.sort((a,b)=>(a.isSep-b.isSep)||a.g.localeCompare(b.g,'ru',{numeric:true}));
   // проверки
@@ -535,6 +558,13 @@ function compute(){
     const neg=src.rows.filter(r=>r.sum<0);
     if(neg.length)add('warn','Начисления',m,'Отрицательные начисления: '+neg.length,neg.map(r=>r.name.trim()+' '+money(r.sum)).join('; ')+'. Они вычтены из суммы сотрудника.');
   }
+  if(Object.keys(S.leaders).length){
+    const lm=Object.keys(S.leaders).sort().filter(m=>m!=='0000-00').map(mShort).join(', ');
+    add('info','Руководители групп',null,'Руководители взяты из файла распределения часов'+(lm?' за: '+lm:''),'Для остальных месяцев показан тот же состав. Если руководитель группы менялся, загрузите файл за нужный месяц.');
+    const noL=groups.filter(g=>!g.isSep&&!g.leader).map(g=>g.g);
+    if(noL.length)add('warn','Руководители групп',null,'Руководитель не найден для групп: '+noL.join(', '));
+    const pk=new Set();Object.values(S.leaders).forEach(l=>Object.values(l.map).forEach(n=>pk.add(n)));
+  }
   // сохранение долей
   let viol=0;for(const e of empMonth)if(e.hasPay&&e.allocT>e.pay+0.005)viol++;
   if(empMonth.length){if(viol)add('err','Распределение',null,'Отнесено больше, чем начислено у '+viol+' сотрудников','Проверьте часы в отчёте по часам.');else add('ok','Распределение',null,'Отнесённые начисления не превышают начисления ни у одного сотрудника','Проверено сотрудник-месяцев: '+empMonth.length)}
@@ -546,14 +576,15 @@ function compute(){
 const ZONES=[
   {k:'tabel',n:'',t:'Детский табель',h:'Месячные выгрузки, можно несколько файлов сразу'},
   {k:'report',n:'',t:'Педагогические часы',h:'«Работа педагога за месяц с группами»'},
-  {k:'payroll',n:'',t:'Начисления РОУ',h:'ФИО, месяц и сумма начислений'}
+  {k:'payroll',n:'',t:'Начисления РОУ',h:'ФИО, месяц и сумма начислений'},
+  {k:'leaders',n:'',t:'Руководители групп',h:'«Распределение педагогических часов по группам»'}
 ];
 function renderZones(){
   $('#zones').innerHTML=ZONES.map(z=>{
     let items;
     if(z.k==='payroll'){const by={};Object.keys(S.payroll).sort().forEach(m=>(by[S.payroll[m].fileName]=by[S.payroll[m].fileName]||[]).push(m));
       items=Object.entries(by).map(([f,ms])=>['F:'+f,f,ms.length>1?mShort(ms[0])+' – '+mShort(ms[ms.length-1])+' · '+ms.length+' мес.':mShort(ms[0])])}
-    else items=Object.keys(S[z.k]).sort().map(m=>[m,S[z.k][m].fileName,mShort(m)]);
+    else items=Object.keys(S[z.k]).sort().map(m=>[m,S[z.k][m].fileName,/^\d{4}-\d{2}$/.test(m)&&m!=='0000-00'?mShort(m):'файл']);
     return `<div class="zone" data-z="${z.k}">
       <div class="top"><div><b>${z.t}</b><div class="hint">${z.h}</div></div>
       <button class="btn sm" data-pick="${z.k}">Добавить</button></div>
@@ -569,14 +600,14 @@ function renderZones(){
 }
 function renderMonths(R){
   const inM=new Set(R.months);
-  $('#months').innerHTML=`<h2>Месяцы учебного года · октябрь 2025 исключён</h2><div class="mrow">${MS.map(m=>{
+  $('#months').innerHTML=`<h2>Месяцы учебного года · октябрь исключён</h2><div class="mrow">${MS.map(m=>{
     const t=!!S.tabel[m],r=!!S.report[m],p=!!S.payroll[m];
     return `<div class="m ${inM.has(m)?'in':''}"><b>${mShort(m)}</b><div class="dots"><span class="dot ${t?'y':''}">${t?'✓':'–'} табель</span><span class="dot ${r?'y':''}">${r?'✓':'–'} часы</span><span class="dot ${p?'y':''}">${p?'✓':'–'} начисл.</span></div><span style="color:var(--muted)">${m===EXCLUDED_MONTH?'исключён':inM.has(m)?'в расчёте':(t||r?'нужны табель и часы':(p?'только начисления':'нет данных'))}</span></div>`}).join('')}</div>`;
   const miss=MS.filter(m=>m!==EXCLUDED_MONTH&&!inM.has(m));
   let html='';
   if(!R.months.length)html='<div class="banner">Загрузите детский табель и отчёт по часам хотя бы за один месяц. Месяц входит в расчёт, когда есть оба файла.</div>';
   else{
-    html=`<div class="banner ${miss.length?'':'ok'}">В расчёте ${R.months.length} из 9 месяцев (октябрь 2025 исключён): ${R.months.map(mShort).join(', ')}.${miss.length?' Нет данных: '+miss.map(mShort).join(', ')+'. Это не нули: итоги относятся только к загруженным месяцам.':''}</div>`;
+    html=`<div class="banner ${miss.length?'':'ok'}">В расчёте ${R.months.length} из 9 месяцев (октябрь исключён): ${R.months.map(mShort).join(', ')}.${miss.length?' Нет данных: '+miss.map(mShort).join(', ')+'. Это не нули: итоги относятся только к загруженным месяцам.':''}</div>`;
   }
   $('#banner').innerHTML=html;
 }
@@ -584,18 +615,18 @@ function statusPill(g){return `<span class="pill ${g.kind}">${esc(g.status)}</sp
 function costTable(R){
   if(!R.months.length)return `<div class="panel"><div class="empty"><b>Здесь появится стоимость часа по группам</b>Добавьте детский табель, отчёт по часам и начисления. Таблица покажет детские часы, отнесённые начисления, стоимость часа, покрытие и статус каждой группы.</div></div>`;
   const main=R.groups.filter(g=>!g.isSep),bk=R.groups.filter(g=>g.isSep);
-  const row=g=>`<tr class="click" data-g="${esc(g.g)}" tabindex="0"><td class="g">${esc(g.g)}</td><td class="n">${fmt(g.child)}</td><td class="n">${g.reg>0?money(g.alloc):'—'}</td>
+  const row=g=>`<tr class="click" data-g="${esc(g.g)}" tabindex="0"><td class="g">${esc(g.g)}</td><td class="ld">${esc(g.leader||'—')}</td><td class="n">${fmt(g.child)}</td><td class="n">${g.reg>0?money(g.alloc):'—'}</td>
     <td class="n"><span class="cost ${g.kind==='ok'||g.isSep&&g.kind!=='warn'?'':'pre'}">${g.cost==null?'—':money(g.cost)}</span>${g.cost!=null&&g.kind==='warn'?'<div class="why">предварительно</div>':''}</td>
     <td class="n">${g.cover==null?'—':fmt(g.cover*100,0)+'%'}<div class="why">${g.nMonths} мес.</div></td>
     <td>${statusPill(g)}${g.reasons.length?`<div class="why">${esc(g.reasons.join('. '))}</div>`:''}</td>
     <td class="n"><input type="checkbox" data-sep="${esc(g.g)}" ${g.isSep?'checked':''} aria-label="Показывать группу ${esc(g.g)} отдельно"></td></tr>`;
   const ok=main.filter(g=>g.kind==='ok');const tC=ok.reduce((a,g)=>a+g.child,0),tA=ok.reduce((a,g)=>a+g.alloc,0);
-  const head='<thead><tr><th>Группа</th><th class="n">Детские часы</th><th class="n">Отнесённые начисления</th><th class="n">Стоимость часа</th><th class="n">Покрытие</th><th>Статус</th><th class="n" title="Не детская группа или малый объём данных: показывается отдельно и не входит в среднее">Отдельно</th></tr></thead>';
+  const head='<thead><tr><th>Группа</th><th>Руководитель</th><th class="n">Детские часы</th><th class="n">Отнесённые начисления</th><th class="n">Стоимость часа</th><th class="n">Покрытие</th><th>Статус</th><th class="n" title="Не детская группа или малый объём данных: показывается отдельно и не входит в среднее">Отдельно</th></tr></thead>';
   return `<div class="panel"><div class="tools"><h2>Стоимость детского часа по группам · ${S.period==='all'?'весь год':mFull(S.period)}</h2><span class="sp" style="flex:1"></span>
     <label><input type="checkbox" id="optRG" ${S.opts.subRG?'checked':''}> Вычитать минуты РГ, как в колонке «Итого» табеля</label>
     <label title="По умолчанию (как в ТЗ) время ок.пед. входит в общее время сотрудника, и его доля зарплаты на группы не переносится. С галочкой оно исключается из общего времени, и вся зарплата делится только между остальными видами работ."><input type="checkbox" id="optOK" ${S.opts.okped?'checked':''}> Относить ок.пед. на группы</label></div>
     <div class="scroll"><table>${head}<tbody>${main.map(row).join('')}</tbody>
-    <tfoot><tr><td>Рассчитанные группы</td><td class="n">${fmt(tC)}</td><td class="n">${money(tA)}</td><td class="n">${tC>0?money(tA/tC):'—'}</td><td></td><td class="why">В среднем по группам со статусом «Рассчитано»</td><td></td></tr></tfoot></table></div>
+    <tfoot><tr><td>Рассчитанные группы</td><td></td><td class="n">${fmt(tC)}</td><td class="n">${money(tA)}</td><td class="n">${tC>0?money(tA/tC):'—'}</td><td></td><td class="why">В среднем по группам со статусом «Рассчитано»</td><td></td></tr></tfoot></table></div>
     ${S.period==='all'&&R.months.length>1?`<h2>По месяцам</h2><div class="scroll"><table><thead><tr><th>Группа</th>${R.months.map(m=>`<th class="n">${mShort(m)}</th>`).join('')}<th class="n">Все месяцы</th></tr></thead><tbody>${main.map(g=>`<tr><td class="g">${esc(g.g)}</td>${R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?`<td class="n"><span class="cost ${c.ok?'':'pre'}">${money(c.cost)}</span></td>`:'<td class="n">—</td>'}).join('')}<td class="n"><span class="cost ${g.kind==='ok'?'':'pre'}">${g.cost==null?'—':money(g.cost)}</span></td></tr>`).join('')}</tbody></table></div><p class="note">Курсив: за месяц есть неполнота (нет начислений, часов занятий или детских часов). Итог за все месяцы считается как сумма отнесённых начислений, делённая на сумму детских часов.</p>`:''}
     ${bk.length?`<h2>Показаны отдельно</h2><p class="note">Не детские группы или группы с малым объёмом данных. В итоговое среднее не входят. Список меняется галочкой «Отдельно» в таблице выше.</p><div class="scroll"><table>${head}<tbody>${bk.map(row).join('')}</tbody></table></div>`:''}
     <p class="note">Это управленческая оценка по структуре учтённого времени. Начисления сотрудника делятся пропорционально часам регулярных занятий группы к общему времени сотрудника в отчёте по часам. Доля амбулатории, консультаций, подготовки и других работ не переносится на группы. Это не полная себестоимость: прочие расходы не включены. Строка с пометкой «предварительно» не является установленной стоимостью. Нажмите на строку, чтобы увидеть распределение.</p></div>`;
@@ -711,58 +742,58 @@ async function exportXlsx(){
   page(wd,4,'Распределение начислений');
 
   /* ---- Стоимость часа ---- */
-  const nCols=7+(multi?R.months.length:0);const ML=7;
-  title(wc,'Стоимость детского часа регулярных занятий',sub,Math.max(7,nCols));
+  const nCols=8+(multi?R.months.length:0);
+  title(wc,'Стоимость детского часа регулярных занятий',sub,Math.max(8,nCols));
   let row=4;
   const block=(h,text)=>{
-    wc.mergeCells(row,1,row,7);const a=wc.getCell(row,1);a.value=h;a.font={name:'Calibri',bold:true,color:{argb:C.teal}};a.fill=fill(C.soft);row++;
-    wc.mergeCells(row,1,row,7);const b=wc.getCell(row,1);b.value=text;b.font={name:'Calibri',size:10.5,color:{argb:C.ink}};b.alignment={wrapText:true,vertical:'top'};
-    wc.getRow(row).height=Math.max(18,Math.ceil(text.length/150)*14.5+6);row++;
+    wc.mergeCells(row,1,row,8);const a=wc.getCell(row,1);a.value=h;a.font={name:'Calibri',bold:true,color:{argb:C.teal}};a.fill=fill(C.soft);row++;
+    wc.mergeCells(row,1,row,8);const b=wc.getCell(row,1);b.value=text;b.font={name:'Calibri',size:10.5,color:{argb:C.ink}};b.alignment={wrapText:true,vertical:'top'};
+    wc.getRow(row).height=Math.max(18,Math.ceil(text.length/170)*14.5+6);row++;
   };
   const orgs=[...allOrgs()].sort();
-  wc.getCell(row,1).value='Комментарий к расчёту';wc.mergeCells(row,1,row,7);wc.getCell(row,1).font={name:'Calibri',size:13,bold:true,color:{argb:C.ink}};row++;
+  wc.getCell(row,1).value='Комментарий к расчёту';wc.mergeCells(row,1,row,8);wc.getCell(row,1).font={name:'Calibri',size:13,bold:true,color:{argb:C.ink}};row++;
   block('Что показывает расчёт','Расходы Центра на оплату труда, приходящиеся на один детский час регулярных занятий, по каждой группе. Час работы педагога с пятью детьми — один педагогический час, но пять детских часов; в расчёте используются детские часы. Это управленческая оценка по структуре учтённого времени, а не полная себестоимость: прочие расходы Центра и начисления, которых нет в данных РОУ, сюда не входят.');
   block('Как посчитано','Начисления сотрудника за месяц распределены по группам пропорционально доле его часов регулярных занятий в группе в общем учтённом времени за месяц (занятия, консультации, амбулатория, подготовка, технические часы и прочее). '+(S.opts.okped?'Время околопедагогической работы (ок.пед.), которое отдельно не оплачивается, исключено из общего времени сотрудника, поэтому его доля зарплаты распределена на группы пропорционально занятиям. ':'')+'Доля консультаций, амбулатории и других работ на группы не переносится. Стоимость часа = отнесённые начисления группы ÷ детские часы группы.'+(orgs.length>1?' Начисления сотрудника из разных организаций ('+orgs.join(', ')+') суммируются.':'')+' В стоимость не входят группы 05 и 05.1, первичный приём (П), околопедагогическая работа и амбулатория (11); группа 16-МЛ объединена с 16.'+(sepList.length?' Группы '+sepList.map(g=>g.g).join(', ')+' показаны отдельно (не детские группы или малый объём данных) и в итоговое среднее не входят.':''));
-  block('Данные','Период: '+periodTxt+'. Октябрь 2025 исключён полностью из расчёта из-за отсутствия корректного детского табеля. '+(miss.length?'Нет данных за: '+miss.map(mFull).join(', ')+'. Эти месяцы в расчёт не вошли и не считаются нулевыми. ':'')+'Источники: детский табель, отчёт по педагогическим часам, начисления РОУ. '+(S.opts.subRG?'Детские часы взяты по колонке «Итого» табеля (минуты РГ вычтены).':'Детские часы взяты как сумма минут по датам (минуты РГ не вычтены).'));
+  block('Данные','Период: '+periodTxt+'. Октябрь 2025 полностью исключён из расчёта из-за отсутствия корректного детского табеля. '+(Object.keys(S.leaders).length?'Руководители групп — по таблице распределения педагогических часов'+(Object.keys(S.leaders).filter(m=>m!=='0000-00').length?' за '+Object.keys(S.leaders).sort().filter(m=>m!=='0000-00').map(mFull).join(', '):'')+'. ':'')+(miss.length?'Нет данных за: '+miss.map(mFull).join(', ')+'. Эти месяцы в расчёт не вошли и не считаются нулевыми. ':'')+'Источники: детский табель, отчёт по педагогическим часам, начисления РОУ. '+(S.opts.subRG?'Детские часы взяты по колонке «Итого» табеля (минуты РГ вычтены).':'Детские часы взяты как сумма минут по датам (минуты РГ не вычтены).'));
   block('Насколько можно доверять цифрам','Полные данные по '+okG.length+' из '+mains.length+' групп (статус «Рассчитано»).'+(preG.length?' По '+preG.length+' группам стоимость предварительная: у части педагогов в файле начислений не найдены начисления, поэтому отнесённая сумма занижена. Такие строки выделены курсивом и не являются установленной стоимостью.':'')+(R.unmatchedList.length?' Педагогов без начислений: '+R.unmatchedList.length+', список на листе «Проверка данных».':'')+(noG.length?' Без расчёта: '+noG.map(g=>g.g).join(', ')+' (нет детских часов или часов занятий).':'')+' «Покрытие» — доля часов занятий группы, по которым найдены начисления.');
   row++;
-  if(multi){wc.mergeCells(row,8,row,7+R.months.length);const mh=wc.getCell(row,8);mh.value='По месяцам, ₽';mh.font={name:'Calibri',bold:true,color:{argb:C.teal}};mh.fill=fill(C.soft);mh.alignment={horizontal:'center'}}
+  if(multi){wc.mergeCells(row,9,row,8+R.months.length);const mh=wc.getCell(row,9);mh.value='По месяцам, ₽';mh.font={name:'Calibri',bold:true,color:{argb:C.teal}};mh.fill=fill(C.soft);mh.alignment={horizontal:'center'}}
   const H=row+1;
-  const hdrs=['Группа','Детские часы','Отнесённые начисления, ₽','Стоимость часа, ₽','Покрытие','Статус','Комментарий'].concat(multi?R.months.map(mShort):[]);
+  const hdrs=['Группа','Руководитель группы','Детские часы','Отнесённые начисления, ₽','Стоимость часа, ₽','Покрытие','Статус','Комментарий'].concat(multi?R.months.map(mShort):[]);
   hdrs.forEach((h,i)=>wc.getCell(H,i+1).value=h);
   head(wc,H,1,hdrs.length);
-  [12,13,19,16,11,16,50].forEach((w,i)=>wc.getColumn(i+1).width=w);
-  if(multi)R.months.forEach((m,j)=>wc.getColumn(8+j).width=11);
+  [12,24,13,19,16,11,18,50].forEach((w,i)=>wc.getColumn(i+1).width=w);
+  if(multi)R.months.forEach((m,j)=>wc.getColumn(9+j).width=11);
   const G0=H+1,GL=G0+R.groups.length-1;
   const ordered=[...mains,...sepList];
   ordered.forEach((g,i)=>{const n=G0+i;const rw=wc.getRow(n);
-    rw.values=[g.g,g.child,{formula:`SUMPRODUCT((Распределение!$B$${D0}:$B$${DL}=A${n})*Распределение!$H$${D0}:$H$${DL})`,result:g.alloc},{formula:`IF(AND(B${n}>0,C${n}>0),C${n}/B${n},"")`,result:g.cost==null?'':g.cost},g.cover,stText(g),g.why||(g.isSep?'Показана отдельно, в итоговое среднее не входит':'')].concat(multi?R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?c.cost:null}):[]);
+    rw.values=[g.g,g.leader||'',g.child,{formula:`SUMPRODUCT((Распределение!$B$${D0}:$B$${DL}=A${n})*Распределение!$H$${D0}:$H$${DL})`,result:g.alloc},{formula:`IF(AND(C${n}>0,D${n}>0),D${n}/C${n},"")`,result:g.cost==null?'':g.cost},g.cover,stText(g),g.why||(g.isSep?'Показана отдельно, в итоговое среднее не входит':'')].concat(multi?R.months.map(m=>{const c=g.perM[m];return c&&c.cost!=null?c.cost:null}):[]);
     for(let c=1;c<=nCols;c++){const x=rw.getCell(c);x.font={name:'Calibri',color:{argb:C.ink}};if(i%2)x.fill=fill(C.zebra);x.border={bottom:thin};x.alignment={vertical:'middle'}}
     const a=rw.getCell(1);a.numFmt='@';a.font={name:'Consolas',bold:true,color:{argb:C.ink}};a.alignment={vertical:'middle',horizontal:'left'};
-    rw.getCell(2).numFmt='#,##0.0';rw.getCell(3).numFmt='#,##0';rw.getCell(4).numFmt='#,##0';rw.getCell(5).numFmt='0%';
+    rw.getCell(2).font={name:'Calibri',size:10,color:{argb:C.ink}};rw.getCell(3).numFmt='#,##0.0';rw.getCell(4).numFmt='#,##0';rw.getCell(5).numFmt='#,##0';rw.getCell(6).numFmt='0%';
     const pre=g.kind==='warn';
-    rw.getCell(4).font=pre?{name:'Calibri',italic:true,color:{argb:C.warnT}}:g.kind==='ok'?{name:'Calibri',bold:true,size:12,color:{argb:C.ink}}:{name:'Calibri',color:{argb:C.muted}};
-    if(pre)rw.getCell(5).font={name:'Calibri',color:{argb:C.warnT}};
-    const st=rw.getCell(6);st.alignment={horizontal:'center',vertical:'middle'};
+    rw.getCell(5).font=pre?{name:'Calibri',italic:true,color:{argb:C.warnT}}:g.kind==='ok'?{name:'Calibri',bold:true,size:12,color:{argb:C.ink}}:{name:'Calibri',color:{argb:C.muted}};
+    if(pre)rw.getCell(6).font={name:'Calibri',color:{argb:C.warnT}};
+    const st=rw.getCell(7);st.alignment={horizontal:'center',vertical:'middle'};
     const sc={ok:[C.ok,C.okT],warn:[C.warn,C.warnT],info:[C.info,C.muted]}[g.isSep?'info':g.kind];st.fill=fill(sc[0]);st.font={name:'Calibri',bold:true,size:10,color:{argb:sc[1]}};
-    const cm=rw.getCell(7);cm.font={name:'Calibri',size:10,color:{argb:C.muted}};cm.alignment={wrapText:true,vertical:'middle'};
+    const cm=rw.getCell(8);cm.font={name:'Calibri',size:10,color:{argb:C.muted}};cm.alignment={wrapText:true,vertical:'middle'};
     if(g.why&&g.why.length>52)rw.height=30;
-    if(multi)R.months.forEach((m,j)=>{const x=rw.getCell(8+j);x.numFmt='#,##0';x.alignment={horizontal:'right',vertical:'middle'};const c=g.perM[m];if(c&&!c.ok&&c.cost!=null)x.font={name:'Calibri',italic:true,color:{argb:C.warnT}}});
+    if(multi)R.months.forEach((m,j)=>{const x=rw.getCell(9+j);x.numFmt='#,##0';x.alignment={horizontal:'right',vertical:'middle'};const c=g.perM[m];if(c&&!c.ok&&c.cost!=null)x.font={name:'Calibri',italic:true,color:{argb:C.warnT}}});
   });
   // итог
   const T=GL+1;const okR=okG.reduce((a,g)=>({c:a.c+g.child,a:a.a+g.alloc}),{c:0,a:0});
-  const tr=wc.getRow(T);tr.values=['Итого по группам со статусом «Рассчитано»',{formula:`SUMIF($F$${G0}:$F$${GL},"Рассчитано",B${G0}:B${GL})`,result:okR.c},{formula:`SUMIF($F$${G0}:$F$${GL},"Рассчитано",C${G0}:C${GL})`,result:okR.a},{formula:`IF(B${T}>0,C${T}/B${T},"")`,result:okR.c>0?okR.a/okR.c:''}];
-  wc.mergeCells(T,5,T,7);
-  for(let c=1;c<=7;c++){const x=tr.getCell(c);x.font={name:'Calibri',bold:true,color:{argb:C.ink}};x.fill=fill(C.soft);x.border={top:{style:'medium',color:{argb:C.teal}}}}
+  const tr=wc.getRow(T);tr.values=['Итого по группам со статусом «Рассчитано»','',{formula:`SUMIF($G$${G0}:$G$${GL},"Рассчитано",C${G0}:C${GL})`,result:okR.c},{formula:`SUMIF($G$${G0}:$G$${GL},"Рассчитано",D${G0}:D${GL})`,result:okR.a},{formula:`IF(C${T}>0,D${T}/C${T},"")`,result:okR.c>0?okR.a/okR.c:''}];
+  wc.mergeCells(T,6,T,8);
+  for(let c=1;c<=8;c++){const x=tr.getCell(c);x.font={name:'Calibri',bold:true,color:{argb:C.ink}};x.fill=fill(C.soft);x.border={top:{style:'medium',color:{argb:C.teal}}}}
   tr.getCell(1).alignment={wrapText:true,vertical:'middle'};tr.height=32;
-  tr.getCell(2).numFmt='#,##0.0';tr.getCell(3).numFmt='#,##0';tr.getCell(4).numFmt='#,##0';
-  wc.getCell(T,5).value='Среднее по группам с полными данными';wc.getCell(T,5).font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};wc.getCell(T,5).alignment={vertical:'middle',horizontal:'right'};
-  if(multi&&R.groups.length>0){wc.addConditionalFormatting({ref:`H${G0}:${wc.getColumn(7+R.months.length).letter}${GL}`,rules:[{type:'colorScale',cfvo:[{type:'min'},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FF9FD3D8'}]}]})}
+  tr.getCell(3).numFmt='#,##0.0';tr.getCell(4).numFmt='#,##0';tr.getCell(5).numFmt='#,##0';
+  wc.getCell(T,6).value='Среднее по группам с полными данными';wc.getCell(T,6).font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};wc.getCell(T,6).alignment={vertical:'middle',horizontal:'right'};
+  if(multi&&R.groups.length>0){wc.addConditionalFormatting({ref:`I${G0}:${wc.getColumn(8+R.months.length).letter}${GL}`,rules:[{type:'colorScale',cfvo:[{type:'min'},{type:'max'}],color:[{argb:'FFFFFFFF'},{argb:'FF9FD3D8'}]}]})}
   let lg=T+2;
-  wc.mergeCells(lg,1,lg,7);wc.getCell(lg,1).value='Обозначения: зелёный статус — данные полные; жёлтый статус и курсив — предварительная оценка, начисления найдены не для всех педагогов; серый — расчёт невозможен или группа показана отдельно.';
+  wc.mergeCells(lg,1,lg,8);wc.getCell(lg,1).value='Обозначения: зелёный статус — данные полные; жёлтый статус и курсив — предварительная оценка, начисления найдены не для всех педагогов; серый — расчёт невозможен или группа показана отдельно.';
   wc.getCell(lg,1).font={name:'Calibri',size:10,italic:true,color:{argb:C.muted}};wc.getCell(lg,1).alignment={wrapText:true,vertical:'top'};wc.getRow(lg).height=30;
   wc.autoFilter={from:{row:H,column:1},to:{row:GL,column:hdrs.length}};
-  wc.views=[{showGridLines:false,state:'frozen',ySplit:H,xSplit:1}];
+  wc.views=[{showGridLines:false}];
   page(wc,H,'Управленческая оценка, не полная себестоимость');
 
   /* ---- Проверка данных ---- */
