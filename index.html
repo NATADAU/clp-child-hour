@@ -22,7 +22,7 @@ const norm=x=>String(x??'').trim().replace(/\s+/g,' ').toUpperCase().replace(/Ё
 const mm=x=>{const s=String(x??'').toLowerCase();let m=s.match(/(20\d{2})[-.\s](0?[1-9]|1[0-2])(?:\D|$)/);if(m)return m[1]+'-'+m[2].padStart(2,'0');m=s.match(/(0?[1-9]|1[0-2])[-.](20\d{2})/);if(m)return m[2]+'-'+m[1].padStart(2,'0');const months=['январ','феврал','март','апрел','май','июн','июл','август','сентябр','октябр','ноябр','декабр'];const i=months.findIndex(n=>s.includes(n)),y=s.match(/20\d{2}/);return i>=0&&y?y[0]+'-'+String(i+1).padStart(2,'0'):null};
 const allMonths=Array.from({length:10},(_,i)=>i<4?'2025-'+String(i+9).padStart(2,'0'):'2026-'+String(i-3).padStart(2,'0'));let expected=[];const monthSet=id=>new Set(stored(id).map(f=>mm(f.name)).filter(m=>allMonths.includes(m)));
 const code=x=>{const t=norm(x).replace(/\s+/g,'').replace(/[–—]/g,'-');return ['16-МЛ','16МЛ'].includes(t)?'16':t==='05,1'?'05.1':t};
-const excluded=new Set(['05','05.1','П','ОК.ПЕД.']),outpatientCode='11',direction=g=>g==='11'?'out':g==='БК'?'bk':'main',issue=(list,m,kind,ref,comment)=>list.push({m:m||'—',kind,ref,comment});
+const excluded=new Set(['05','05.1','П','ОК.ПЕД.']),isExcluded=g=>excluded.has(g)||/^05(?:$|[._-])/.test(g),outpatientCode='11',direction=g=>g==='11'?'out':g==='БК'?'bk':'main',issue=(list,m,kind,ref,comment)=>list.push({m:m||'—',kind,ref,comment});
 const add=(map,key,n)=>map.set(key,(map.get(key)||0)+n);
 // Confirmed name correspondences for joining teaching records to ROU payroll.
 const personKey=v=>{
@@ -56,7 +56,7 @@ function updateFiles(){
 for(const id of ['child','detail','salary'])$(id).addEventListener('change',()=>addFiles(id,$(id).files));
 updateFiles();
 async function load(id){const result=[];for(const file of stored(id)){const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});result.push({name:file.name,sheets:wb.SheetNames.map(n=>XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:null,raw:true}))})}return result}
-function parseChild(book,children,issues){let found=0;for(const sh of book.sheets){const h=sh.findIndex(r=>norm(r?.[0])==='ФАМИЛИЯ ИМЯ'&&norm(r?.[1])==='ГРУППА');if(h<0)continue;const m=mm(book.name)||mm(sh[h-2]?.[1]);if(!expected.includes(m)){issue(issues,m,'Месяц не определён',book.name,'Детский табель пропущен');continue}const dates=sh[h].map((x,i)=>({i,d:num(x)})).filter(x=>x.i>=2&&x.d>=1&&x.d<=31);for(const row of sh.slice(h+1)){const child=norm(row?.[0]),g=code(row?.[1]);if(!child||!g||/ИТОГО|ВСЕГО/.test(child))continue;if(excluded.has(g))continue;for(const {i,d} of dates){const minutes=num(row[i]);if(minutes>0){const key=m+'|'+String(d).padStart(2,'0')+'|'+g+'|'+child;add(children,key,minutes);found++}}}}if(!found)issue(issues,mm(book.name),'Пустой детский табель',book.name,'В файле нет строк с детьми, группами и минутами занятий. Проверьте выгрузку из Интерина; месяц не включён в расчёт.')}
+function parseChild(book,children,issues){let found=0;for(const sh of book.sheets){const h=sh.findIndex(r=>norm(r?.[0])==='ФАМИЛИЯ ИМЯ'&&norm(r?.[1])==='ГРУППА');if(h<0)continue;const m=mm(book.name)||mm(sh[h-2]?.[1]);if(!expected.includes(m)){issue(issues,m,'Месяц не определён',book.name,'Детский табель пропущен');continue}const dates=sh[h].map((x,i)=>({i,d:num(x)})).filter(x=>x.i>=2&&x.d>=1&&x.d<=31);for(const row of sh.slice(h+1)){const child=norm(row?.[0]),g=code(row?.[1]);if(!child||!g||/ИТОГО|ВСЕГО/.test(child))continue;if(isExcluded(g))continue;for(const {i,d} of dates){const minutes=num(row[i]);if(minutes>0){const key=m+'|'+String(d).padStart(2,'0')+'|'+g+'|'+child;add(children,key,minutes);found++}}}}if(!found)issue(issues,mm(book.name),'Пустой детский табель',book.name,'В файле нет строк с детьми, группами и минутами занятий. Проверьте выгрузку из Интерина; месяц не включён в расчёт.')}
 function parseDetail(book,teachers,issues,allWork){
 let count=0;
 for(const sh of book.sheets){
@@ -65,7 +65,7 @@ for(const sh of book.sheets){
   const typ=norm(r?.[0]),date=String(r?.[1]??''),dt=date.match(/^(\d{1,2})\.(\d{1,2})\.(20\d{2})/),m=dt?dt[3]+'-'+dt[2].padStart(2,'0'):mm(book.name),d=dt?dt[1].padStart(2,'0'):null,g=code(r?.[5]),emp=norm(r?.[10]),child=norm(r?.[6]),minutes=num(r?.[8]);
   if(!expected.includes(m)||!emp||minutes<=0)continue;
   add(allWork,m+'|'+personKey(emp),minutes/60);
-  if(!d||!g||g===outpatientCode||excluded.has(g)||!['GRP','IND'].includes(typ))continue;
+  if(!d||!g||g===outpatientCode||isExcluded(g)||!['GRP','IND'].includes(typ))continue;
   if(/КОНСУЛЬТАЦ|ПЕРВИЧН|ТЕХНИЧ|КАРТ/.test([r?.[4],r?.[11],r?.[6]].map(norm).join(' ')))continue;
   const k=m+'|'+d+'|'+g+'|'+emp,record=teachers.get(k)||{m,d,g,emp,group:0,individual:new Map()};
   if(typ==='GRP')record.group+=minutes;else if(child&&child!=='GROUP')add(record.individual,child,minutes);
