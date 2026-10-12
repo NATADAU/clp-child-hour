@@ -215,7 +215,7 @@ const NON_CHILD_GROUPS=new Set(['32']);
 // Группа 32 — не детская, начисления по ней не обязательны. Романова Т. А. не исключается из проверок.
 
 /* ---------- состояние ---------- */
-const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
+const S={tabel:{},report:{},payroll:{},rouSource:{},leaders:{},opts:{subRG:true},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
 
 /* ---------- разбор файлов ---------- */
 function sheetsOf(buf){
@@ -369,6 +369,8 @@ function place(kind,p){
   if(was)toast(mFull(p.month)+': файл заменён на «'+p.fileName+'»');
 }
 function placePayroll(p){
+  // Keep a browser-only copy of all parsed payroll records for an audit worksheet.
+  S.rouSource[p.fileName]=p.byMonth;
   const used=[],out=[];
   for(const [m,src] of Object.entries(p.byMonth)){
     if(!MS.includes(m)){out.push(m);continue}
@@ -378,7 +380,7 @@ function placePayroll(p){
   if(!used.length)toast('«'+p.fileName+'»: нет месяцев из периода сентябрь 2025 — июнь 2026');
 }
 function allOrgs(){const o=new Set();Object.values(S.payroll).forEach(x=>x.rows.forEach(r=>{if(r.org)o.add(r.org)}));return o}
-function removeFile(kind,m){if(m.startsWith('F:')){const f=m.slice(2);Object.keys(S.payroll).forEach(k=>{if(S.payroll[k].fileName===f)delete S.payroll[k]});}else delete S[kind][m];render()}
+function removeFile(kind,m){if(m.startsWith('F:')){const f=m.slice(2);delete S.rouSource[f];Object.keys(S.payroll).forEach(k=>{if(S.payroll[k].fileName===f)delete S.payroll[k]});}else delete S[kind][m];render()}
 
 /* ---------- ручная настройка файла начислений ---------- */
 function openMapping(){
@@ -711,7 +713,7 @@ async function exportXlsx(){
   const thin={style:'thin',color:{argb:C.line}};
   const wb=new ExcelJS.Workbook();wb.creator='ЦЛП';wb.title='Стоимость детского часа';wb.created=new Date();
   const mk=n=>wb.addWorksheet(n,{properties:{tabColor:{argb:C.teal}},views:[{showGridLines:false}]});
-  const wc=mk('Стоимость часа'),wd=mk('Распределение'),wk=mk('Что уточнить');
+  const wc=mk('Стоимость часа'),wd=mk('Распределение'),wk=mk('Что уточнить'),wr=mk('РОУ — исходные данные');
   const multi=S.period==='all'&&R.months.length>1;
   const sel=R.selM;const miss=S.period==='all'?MS.filter(m=>m!==EXCLUDED_MONTH&&!R.months.includes(m)):[];
   const periodTxt=S.period==='all'?'учтённые месяцы ('+sel.length+', без октября 2025)':mFull(S.period);
@@ -831,6 +833,32 @@ async function exportXlsx(){
   if(issues.length)wk.autoFilter={from:{row:5,column:1},to:{row:5+issues.length,column:4}};
   wk.views=[{showGridLines:false,state:'frozen',ySplit:5}];
   page(wk,5,'Вопросы по исходным данным');
+  /* ---- Копия данных РОУ для сверки, хранится только в скачиваемом Excel ---- */
+  title(wr,'Начисления РОУ — данные из загруженных файлов','Для проверки сумм. Это построчная копия распознанных начислений, а не полный исходный формат книги РОУ.',7);
+  wr.mergeCells(3,1,3,7);
+  wr.getCell(3,1).value='По столбцу «Используется» видно, какие строки участвуют в текущем расчёте. Октябрь 2025 исключён. Для спорного ФИО найдите его здесь фильтром и сверьте месяц и сумму.';
+  wr.getCell(3,1).font={name:'Calibri',size:10,color:{argb:C.muted}};
+  wr.getCell(3,1).alignment={wrapText:true};wr.getRow(3).height=34;
+  ['Месяц','ФИО в РОУ','Организация','Начислено, ₽','Файл-источник','Лист-источник','Используется в расчёте'].forEach((h,i)=>wr.getCell(5,i+1).value=h);
+  head(wr,5,1,7);
+  [17,32,28,19,42,25,25].forEach((w,i)=>wr.getColumn(i+1).width=w);
+  let sourceRows=0;
+  for(const [fname,byMonth] of Object.entries(S.rouSource)){
+    for(const [month,source] of Object.entries(byMonth)){
+      const active=S.payroll[month];
+      const included=R.selM.includes(month)&&active&&active.fileName===fname&&active.sheet===source.sheet;
+      for(const rec of source.rows){
+        const rw=wr.getRow(6+sourceRows++);
+        rw.values=[mFull(month),rec.name,rec.org||'',rec.sum,fname,source.sheet,included?'Да':'Нет'];
+        for(let c=1;c<=7;c++){const cell=rw.getCell(c);cell.font={name:'Calibri',size:10,color:{argb:C.ink}};cell.border={bottom:thin};if(sourceRows%2===0)cell.fill=fill(C.zebra)}
+        rw.getCell(4).numFmt='#,##0.00';
+        if(!included)rw.getCell(7).font={name:'Calibri',size:10,color:{argb:C.muted}};
+      }
+    }
+  }
+  if(sourceRows)wr.autoFilter={from:{row:5,column:1},to:{row:5+sourceRows,column:7}};
+  wr.views=[{showGridLines:false,state:'frozen',ySplit:5}];
+  page(wr,5,'РОУ — данные для сверки');
   const buf=await wb.xlsx.writeBuffer();
   await saveFile(buf,'Стоимость_детского_часа_'+(S.period==='all'?'год':S.period)+'.xlsx');
 }
