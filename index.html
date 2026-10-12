@@ -452,7 +452,7 @@ function compute(){
       e.regByG[r.code]=(e.regByG[r.code]||0)+r.hrs;
     }
     for(const e of Object.values(E)){
-      const pe=P?P.map.get(e.key):null;const volunteer=isVolunteer(e.key,e.name);const pay=pe?pe.sum:(volunteer?0:null);
+      const volunteer=isVolunteer(e.key,e.name);const pe=volunteer?null:(P?P.map.get(e.key):null);const pay=volunteer?0:(pe?pe.sum:null);
       let regT=0,allocT=0;
       for(const [g,reg] of Object.entries(e.regByG)){
         // Preparation and supporting time is absorbed into delivery; standalone services retain their share.
