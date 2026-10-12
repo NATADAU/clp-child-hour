@@ -212,6 +212,7 @@ const repKey=name=>{const c=canon(name);return MANUAL[c]||c};
 // Волонтёры: отсутствие начислений ожидаемо и не является ошибкой.
 const isVolunteer=(key,name)=>{const k=canon(name||key),v=String(key||'');return k==='битоваал'||k.startsWith('колонин')||k.startsWith('тепелин')||k.startsWith('сохор')||v==='битоваал'};
 const NON_CHILD_GROUPS=new Set(['32']);
+// Группа 32 — не детская, начисления по ней не обязательны. Романова Т. А. не исключается из проверок.
 
 /* ---------- состояние ---------- */
 const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
@@ -653,7 +654,7 @@ function distView(R){
     <label>Педагог <input type="search" id="fQ" value="${esc(f.q)}" placeholder="Фамилия"></label>
     <label><input type="checkbox" id="fN" ${f.nopay?'checked':''}> Только без начислений</label></div>
     <div class="scroll"><table><thead><tr><th>Месяц</th><th>Группа</th><th>Педагог</th><th class="n">Часы базы распределения</th><th class="n">Часы занятий в группе</th><th class="n">Доля</th><th class="n">Начисления</th><th class="n">Отнесено</th></tr></thead><tbody>
-    ${shown.map(r=>`<tr><td>${mShort(r.m)}</td><td class="g">${esc(r.g)}</td><td>${esc(r.name)}</td><td class="n">${fmt(r.tot,2)}</td><td class="n">${fmt(r.reg,2)}</td><td class="n">${fmt(r.share*100,1)}%</td><td class="n">${r.pay==null?'<span class="pill err">нет</span>':money(r.pay)}</td><td class="n">${r.alloc==null?'—':money(r.alloc)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Нет строк по выбранным условиям</td></tr>'}
+    ${shown.map(r=>`<tr><td>${mShort(r.m)}</td><td class="g">${esc(r.g)}</td><td>${esc(r.name)}</td><td class="n">${fmt(r.tot,2)}</td><td class="n">${fmt(r.reg,2)}</td><td class="n">${fmt(r.share*100,1)}%</td><td class="n">${r.pay==null?(NON_CHILD_GROUPS.has(r.g)?'<span class="pill info">не требуется</span>':'<span class="pill err">нет</span>'):money(r.pay)}</td><td class="n">${r.alloc==null?'—':money(r.alloc)}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">Нет строк по выбранным условиям</td></tr>'}
     </tbody></table></div>${rows.length>shown.length?`<p class="note">Показаны первые 1500 из ${rows.length} строк. Полный список в Excel.</p>`:''}</div>`;
 }
 function checkView(R){
@@ -737,11 +738,11 @@ async function exportXlsx(){
   let band=0,prevM=null;
   rows.forEach((r,i)=>{const n=D0+i;if(r.m!==prevM){band^=1;prevM=r.m}
     const row=wd.getRow(n);
-    row.values=[mFull(r.m),r.g,r.name,r.tot,r.reg,{formula:`IF(D${n}>0,E${n}/D${n},0)`,result:r.share},r.pay,{formula:`IF(ISNUMBER(G${n}),G${n}*F${n},0)`,result:r.alloc||0},r.pay==null?'Нет начислений: в стоимость не вошло':''];
+    row.values=[mFull(r.m),r.g,r.name,r.tot,r.reg,{formula:`IF(D${n}>0,E${n}/D${n},0)`,result:r.share},r.pay,{formula:`IF(ISNUMBER(G${n}),G${n}*F${n},0)`,result:r.alloc||0},r.pay==null?(NON_CHILD_GROUPS.has(r.g)?'Группа 32: начисления не требуются':'Нет начислений: в стоимость не вошло'):''];
     for(let c=1;c<=9;c++){const x=row.getCell(c);x.font={name:'Calibri',size:10,color:{argb:C.ink}};if(band)x.fill=fill(C.zebra);x.border={bottom:thin}}
     row.getCell(2).numFmt='@';row.getCell(2).font={name:'Consolas',size:10,bold:true,color:{argb:C.ink}};
     row.getCell(4).numFmt='#,##0.00';row.getCell(5).numFmt='#,##0.00';row.getCell(6).numFmt='0.0%';row.getCell(7).numFmt='#,##0';row.getCell(8).numFmt='#,##0';
-    if(r.pay==null){row.getCell(7).fill=fill(C.err);row.getCell(9).font={name:'Calibri',size:10,color:{argb:C.errT}}}
+    if(r.pay==null&&!NON_CHILD_GROUPS.has(r.g)){row.getCell(7).fill=fill(C.err);row.getCell(9).font={name:'Calibri',size:10,color:{argb:C.errT}}}
   });
   if(rows.length){wd.autoFilter={from:{row:4,column:1},to:{row:DL,column:9}}}
   wd.views=[{showGridLines:false,state:'frozen',ySplit:4,xSplit:3}];
