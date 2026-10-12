@@ -425,6 +425,15 @@ function compute(){
     }
     payMap[m]={map,fileName:src.fileName};
   }
+  // Причины отсутствия берём из педагогического отчёта, а не предполагаем по нулевому посещению.
+  // Расхождение считается объяснённым, только если ВСЕ строки занятий с положительными часами
+  // в этой группе за месяц помечены пропуском ребёнка. Иные причины не подтверждают неявку детей.
+  const childAbsentReason=v=>/^(реб[её]нок пропустил занятия|пропуск занятий по уважительной причине)/i.test(String(v||'').trim());
+  const absenceStatus=(m,g)=>{
+    const rows=(S.report[m]?.rows||[]).filter(r=>r.code===g&&r.hrs>0&&r.type!=='CNS'&&classify(r.code)==='regular');
+    const explained=rows.filter(r=>childAbsentReason(r.reason));
+    return {total:rows.length,marked:explained.length,all:rows.length>0&&explained.length===rows.length};
+  };
   const G={};const gget=g=>G[g]||(G[g]={g,child:0,reg:0,regCov:0,alloc:0,bm:{},names:new Set()});
   const gm=(g,m)=>{const x=gget(g);return x.bm[m]||(x.bm[m]={child:0,reg:0,regCov:0,alloc:0})};
   const dist=[],checks=[{lvl:'info',sec:'Период',month:EXCLUDED_MONTH,text:'Октябрь 2025 исключён из расчёта',detail:'Отсутствует корректный детский табель; октябрьские часы и начисления не используются.'}],excl={},unmatched=[],empMonth=[];
@@ -483,9 +492,9 @@ function compute(){
     const reasons=[];
     const noPayM=NON_CHILD_GROUPS.has(x.g)?[]:Object.entries(x.bm).filter(([m,b])=>b.reg>b.regCov+1e-9).map(([m])=>m);
     const noRepM=Object.entries(x.bm).filter(([m,b])=>b.child>0&&b.reg===0).map(([m])=>m);
-    const noChM=Object.entries(x.bm).filter(([m,b])=>b.reg>0&&b.child===0).map(([m])=>m);
+    const noChM=Object.entries(x.bm).filter(([m,b])=>b.reg>0&&b.child===0&&!absenceStatus(m,x.g).all).map(([m])=>m);
     let status,kind;
-    if(x.child<=0){status='Нет детских часов';kind='info';reasons.push('В табеле нет часов этой группы')}
+    if(x.child<=0){status='Нет детских часов';kind='info';reasons.push('В детском табеле нет посещений. Стоимость одного детского часа рассчитать нельзя, так как делить расходы на ноль нельзя. Расходы педагогов остаются в распределении.')}
     else if(x.reg<=0){status='Нет часов занятий в отчёте';kind='info';reasons.push('В отчёте по часам нет регулярных занятий этой группы')}
     else{
       if(noPayM.length)reasons.push('Не сопоставлены начисления за: '+noPayM.map(mShort).join(', '));
@@ -538,7 +547,11 @@ function compute(){
     const rg=new Set(S.report[m].rows.filter(r=>r.hrs>0&&r.type!=='CNS'&&classify(r.code)==='regular').map(r=>r.code));
     const a=[...tg].filter(g=>!NON_CHILD_GROUPS.has(g)&&!rg.has(g)&&G[g]&&G[g].bm[m]&&G[g].bm[m].child>0),b=[...rg].filter(g=>!NON_CHILD_GROUPS.has(g)&&!tg.has(g));
     if(a.length)add('warn','Группы',m,'Есть в табеле, нет занятий в отчёте по часам',a.join(', '));
-    if(b.length)add('warn','Группы',m,'Есть в отчёте по часам, нет детей в табеле',b.join(', '));
+    for(const g of b){
+      const mark=absenceStatus(m,g);
+      if(mark.all)add('info','Группы',m,'Группа '+g+': в детском табеле нет посещений, а все записи о работе педагогов содержат отметку о пропуске ребёнком занятий.','Расхождение объяснено записями педагогического отчёта, дополнительная проверка не требуется. Расходы педагогов учитываются, но без посещений нельзя рассчитать стоимость одного детского часа за месяц.');
+      else add('warn','Группы',m,'Группа '+g+': в педагогическом отчёте есть часы занятий, но в детском табеле нет посещений.','Отметки о пропуске ребёнком занятий есть в '+mark.marked+' из '+mark.total+' записей с положительными часами. Проверьте причины отсутствия в педагогическом отчёте и полноту детского табеля. Расходы педагогов сохраняются; при нулевых детских часах стоимость часа не рассчитывается.');
+    }
   }
   for(const g of allCodes)if(/^[А-Я]+$/.test(g)&&classify(g)==='regular')add('info','Коды групп',null,'Код «'+g+'» в ТЗ не описан, считается обычной группой'+(g==='БК'?' и выводится отдельно':''));
   for(const e of Object.values(excl)){
