@@ -209,6 +209,9 @@ const saveSep=()=>{try{localStorage.setItem('cch-sep',JSON.stringify([...SEP]))}
 let MANUAL={};try{MANUAL=JSON.parse(localStorage.getItem('cch-manual')||'{}')}catch(e){}
 const saveManual=()=>{try{localStorage.setItem('cch-manual',JSON.stringify(MANUAL))}catch(e){}};
 const repKey=name=>{const c=canon(name);return MANUAL[c]||c};
+// Волонтёры: отсутствие начислений ожидаемо и не является ошибкой.
+const isVolunteer=(key,name)=>{const k=canon(name||key),v=String(key||'');return k==='битоваал'||k.startsWith('колонин')||k.startsWith('тепелин')||k.startsWith('сохор')||v==='битоваал'};
+const NON_CHILD_GROUPS=new Set(['32']);
 
 /* ---------- состояние ---------- */
 const S={tabel:{},report:{},payroll:{},leaders:{},opts:{subRG:true},tab:'cost',flt:{m:'',g:'',q:'',nopay:false},pending:null,payrollOut:[],period:'all'};
@@ -449,7 +452,7 @@ function compute(){
       e.regByG[r.code]=(e.regByG[r.code]||0)+r.hrs;
     }
     for(const e of Object.values(E)){
-      const pe=P?P.map.get(e.key):null;const pay=pe?pe.sum:null;
+      const pe=P?P.map.get(e.key):null;const volunteer=isVolunteer(e.key,e.name);const pay=pe?pe.sum:(volunteer?0:null);
       let regT=0,allocT=0;
       for(const [g,reg] of Object.entries(e.regByG)){
         // Preparation and supporting time is absorbed into delivery; standalone services retain their share.
@@ -461,7 +464,7 @@ function compute(){
         dist.push({m,g,key:e.key,name:e.name,tot:den,reg,share,pay,alloc});
       }
       empMonth.push({m,key:e.key,name:e.name,tot:e.tot,regT,pay,allocT,hasPay:pay!=null});
-      if(pay==null&&regT>0)unmatched.push({m,key:e.key,name:e.name,regT,tot:e.tot,noMonth:!P});
+      if(pay==null&&regT>0){const relevant=Object.entries(e.regByG).filter(([g])=>!NON_CHILD_GROUPS.has(g)).reduce((sum,[,h])=>sum+h,0);if(relevant>0)unmatched.push({m,key:e.key,name:e.name,regT:relevant,tot:e.tot,noMonth:!P});}
     }
   }
   const leaderOf={};
@@ -475,7 +478,7 @@ function compute(){
     for(const b of Object.values(x.bm)){x.child+=b.child;x.reg+=b.reg;x.regCov+=b.regCov;x.alloc+=b.alloc}
     const perM={};for(const m of months){const b=bmAll[m];if(!b)continue;perM[m]={child:b.child,alloc:b.alloc,cost:(b.child>0&&b.reg>0)?b.alloc/b.child:null,ok:b.child>0&&b.reg>0&&b.reg<=b.regCov+1e-9}}
     const reasons=[];
-    const noPayM=Object.entries(x.bm).filter(([m,b])=>b.reg>b.regCov+1e-9).map(([m])=>m);
+    const noPayM=NON_CHILD_GROUPS.has(x.g)?[]:Object.entries(x.bm).filter(([m,b])=>b.reg>b.regCov+1e-9).map(([m])=>m);
     const noRepM=Object.entries(x.bm).filter(([m,b])=>b.child>0&&b.reg===0).map(([m])=>m);
     const noChM=Object.entries(x.bm).filter(([m,b])=>b.reg>0&&b.child===0).map(([m])=>m);
     let status,kind;
@@ -497,8 +500,8 @@ function compute(){
     const why=whyA.join('; ');
     const cover=x.reg>0?x.regCov/x.reg:null;
     const cost=(x.child>0&&x.reg>0)?x.alloc/x.child:null;
-    if(SEP.has(x.g)&&kind==='ok'){status='Отдельно';kind='info';reasons.push('Показана отдельно, в среднее не входит')}
-    groups.push({leader:(leaderOf[x.g]||[]).join(', '),why,perM,g:x.g,child:x.child,alloc:x.alloc,cost,cover,reg:x.reg,nMonths:Object.keys(x.bm).length,status,kind,reasons,isSep:SEP.has(x.g),teachers:x.names.size});
+    if(NON_CHILD_GROUPS.has(x.g)){status='Отдельно';kind='info';reasons.length=0;reasons.push('Не детская группа, не участвует в среднем')}else if(SEP.has(x.g)&&kind==='ok'){status='Отдельно';kind='info';reasons.push('Показана отдельно, в среднее не входит')}
+    groups.push({leader:(leaderOf[x.g]||[]).join(', '),why,perM,g:x.g,child:x.child,alloc:x.alloc,cost,cover,reg:x.reg,nMonths:Object.keys(x.bm).length,status,kind,reasons,isSep:NON_CHILD_GROUPS.has(x.g)||SEP.has(x.g),teachers:x.names.size});
   }
   groups.sort((a,b)=>(a.isSep-b.isSep)||a.g.localeCompare(b.g,'ru',{numeric:true}));
   // проверки
@@ -506,7 +509,7 @@ function compute(){
     if(m===EXCLUDED_MONTH)continue;
     const t=!!S.tabel[m],r=!!S.report[m],p=!!S.payroll[m];
     if((t||r)&&!(t&&r))add('warn','Месяцы',m,'Месяц не входит в расчёт: нет '+(!t?'детского табеля':'')+(!t&&!r?' и ':'')+(!r?'отчёта по часам':''));
-    if(t&&r&&!p)add('err','Месяцы',m,'Нет начислений РОУ за месяц','Стоимость за этот месяц нельзя считать установленной.');
+    if(t&&r&&!p&&S.report[m].rows.some(x=>x.hrs>0&&classify(x.code)==='regular'&&!NON_CHILD_GROUPS.has(x.code)&&!isVolunteer(repKey(x.fio),x.fio)))add('err','Месяцы',m,'Нет начислений РОУ за месяц','Стоимость за этот месяц нельзя считать установленной.');
   }
   if(!Object.keys(S.payroll).length&&months.length)add('err','Начисления',null,'Файл начислений не загружен','Без начислений стоимость часа не считается.');
   for(const m of Object.keys(S.tabel)){
@@ -530,7 +533,7 @@ function compute(){
   for(const m of months){
     const tg=new Set(S.tabel[m].rows.map(r=>r.group).filter(g=>classify(g)==='regular'));
     const rg=new Set(S.report[m].rows.filter(r=>r.hrs>0&&r.type!=='CNS'&&classify(r.code)==='regular').map(r=>r.code));
-    const a=[...tg].filter(g=>!rg.has(g)&&G[g]&&G[g].bm[m]&&G[g].bm[m].child>0),b=[...rg].filter(g=>!tg.has(g));
+    const a=[...tg].filter(g=>!NON_CHILD_GROUPS.has(g)&&!rg.has(g)&&G[g]&&G[g].bm[m]&&G[g].bm[m].child>0),b=[...rg].filter(g=>!NON_CHILD_GROUPS.has(g)&&!tg.has(g));
     if(a.length)add('warn','Группы',m,'Есть в табеле, нет занятий в отчёте по часам',a.join(', '));
     if(b.length)add('warn','Группы',m,'Есть в отчёте по часам, нет детей в табеле',b.join(', '));
   }
