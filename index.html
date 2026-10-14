@@ -730,7 +730,7 @@ async function exportXlsx(){
   const thin={style:'thin',color:{argb:C.line}};
   const wb=new ExcelJS.Workbook();wb.creator='ЦЛП';wb.title='Стоимость детского часа';wb.created=new Date();
   const mk=n=>wb.addWorksheet(n,{properties:{tabColor:{argb:C.teal}},views:[{showGridLines:false}]});
-  const wc=mk('Стоимость часа'),wd=mk('Распределение'),wk=mk('Что уточнить'),wr=mk('РОУ — исходные данные');
+  const wc=mk('Стоимость часа'),wm=mk('Как мы считали'),wd=mk('Распределение'),wk=mk('Что уточнить'),wr=mk('РОУ — исходные данные');
   const multi=S.period==='all'&&R.months.length>1;
   const sel=R.selM;const miss=S.period==='all'?MS.filter(m=>m!==EXCLUDED_MONTH&&!R.months.includes(m)):[];
   const periodTxt=S.period==='all'?'учтённые месяцы ('+sel.length+', без октября 2025)':mFull(S.period);
@@ -796,6 +796,52 @@ async function exportXlsx(){
   if(ordered.length)wc.autoFilter={from:{row:H,column:1},to:{row:GL,column:nCols}};
   wc.views=[{showGridLines:false,state:'frozen',ySplit:H}];
   page(wc,H,'Итоговая стоимость детского часа');
+
+  /* ---- Методика: читатель итогового Excel не пользуется калькулятором ---- */
+  title(wm,'Как мы считали стоимость детского часа',sub,6);
+  [4,18,18,18,18,4].forEach((w,i)=>wm.getColumn(i+1).width=w);
+  const methodologyLine=(n,heading,body,height=50)=>{
+    wm.mergeCells(n,2,n,5);
+    const h=wm.getCell(n,2);h.value=heading;h.font={name:'Calibri',size:12,bold:true,color:{argb:C.teal}};
+    wm.mergeCells(n+1,2,n+1,5);
+    const p=wm.getCell(n+1,2);p.value=body;p.font={name:'Calibri',size:11,color:{argb:C.ink}};
+    p.alignment={wrapText:true,vertical:'top'};wm.getRow(n+1).height=height;
+  };
+  methodologyLine(4,'Что именно посчитано','Стоимость одного часа фактического посещения ребёнком регулярных занятий по расходам на оплату труда педагогов. Это не полная себестоимость: аренда, коммунальные и другие расходы Центра в расчёт не включены.',43);
+  methodologyLine(7,'Откуда взяты цифры','Посещения детей — из детского табеля; часы работы педагогов — из педагогического отчёта; начисления — из файла РОУ. Октябрь 2025 года исключён, поскольку нет корректного детского табеля.',43);
+  methodologyLine(10,'Как распределяются начисления','Если педагог работает в нескольких группах и направлениях, его начисления распределяются пропорционально часам непосредственной работы. Подготовка и сопутствующая работа входят в общую распределяемую сумму. Работа с детскими картами, отмеченная в ОК.ПЕД., относится к направлению 11; остальные ОК.ПЕД. отдельно по группам не распределяются.',58);
+  methodologyLine(13,'Как получена стоимость','Начисления всех педагогов, отнесённые на группу, делятся на суммарные часы фактического посещения детей этой группы. Один час педагога с пятью присутствующими детьми — это пять детских часов. При пропусках детей расходы педагогов могут сохраняться, а число детских часов уменьшаться.',56);
+  methodologyLine(16,'Что не вошло в детские группы','Консультационное направление 11, ранняя помощь (05 и 05.1), первичный приём и другие самостоятельные направления не переносятся на регулярные детские группы. Группы 32 и 35 не являются детскими и в среднюю стоимость детского часа не входят.',50);
+  wm.mergeCells(19,2,19,5);wm.getCell(19,2).value='ПРОСТОЙ ПРИМЕР (условные цифры)';wm.getCell(19,2).font={name:'Calibri',bold:true,color:{argb:C.teal},size:12};
+  [['Начисления педагога за месяц',60000],['Время непосредственной работы — всего, часов',30],['Из них в группе № 8, часов',12],['Начисления, отнесённые на группу № 8, ₽',null],['Посещения детей группы № 8, детских часов',48],['Доля расходов этого педагога на один детский час, ₽',null]].forEach(([name,value],i)=>{
+    const n=20+i;wm.mergeCells(n,2,n,4);wm.getCell(n,2).value=name;wm.getCell(n,2).font={name:'Calibri',size:11,color:{argb:C.ink}};
+    const x=wm.getCell(n,5);x.value=i===3?{formula:'E20*E22/E21',result:24000}:i===5?{formula:'E23/E24',result:500}:value;
+    x.numFmt='#,##0.##';x.font={name:'Calibri',bold:i>=3,color:{argb:C.ink}};
+    if(i===3||i===5){for(let c=2;c<=5;c++)wm.getCell(n,c).fill=fill(C.soft)}
+    wm.getRow(n).height=23;
+  });
+  wm.mergeCells(26,2,26,5);wm.getCell(26,2).value='Это вклад одного педагога. Для стоимости часа всей группы складываются доли начислений всех работающих в ней педагогов.';
+  wm.getCell(26,2).alignment={wrapText:true};wm.getRow(26).height=33;wm.getCell(26,2).font={name:'Calibri',italic:true,color:{argb:C.muted}};
+  const sample=okG.find(g=>g.child>0&&g.cost!=null)||mains.find(g=>g.child>0&&g.cost!=null);
+  wm.mergeCells(28,2,28,5);wm.getCell(28,2).value='ПРИМЕР ИЗ ЭТОЙ ВЫГРУЗКИ';wm.getCell(28,2).font={name:'Calibri',bold:true,color:{argb:C.teal},size:12};
+  if(sample){
+    wm.mergeCells(29,2,29,4);wm.getCell(29,2).value='Группа';wm.getCell(29,5).value=sample.g;
+    wm.mergeCells(30,2,30,4);wm.getCell(30,2).value='Посещения детей, часов';wm.getCell(30,5).value=sample.child;
+    wm.mergeCells(31,2,31,4);wm.getCell(31,2).value='Начисления всех педагогов, отнесённые на группу, ₽';wm.getCell(31,5).value=sample.alloc;
+    wm.mergeCells(32,2,32,4);wm.getCell(32,2).value='Стоимость одного детского часа, ₽';
+    wm.getCell(32,5).value={formula:'IF(E30>0,E31/E30,"")',result:sample.cost};
+    for(let n=29;n<=32;n++){wm.getCell(n,2).font={name:'Calibri',size:11,color:{argb:C.ink}};wm.getCell(n,5).numFmt='#,##0.##';wm.getRow(n).height=24}
+    for(let c=2;c<=5;c++)wm.getCell(32,c).fill=fill(C.soft);
+    wm.getCell(32,5).font={name:'Calibri',bold:true,size:12,color:{argb:C.teal}};
+    wm.mergeCells(34,2,34,5);wm.getCell(34,2).value='Данные этой группы приведены на листе «Стоимость часа». Состав начислений по каждому педагогу и месяцу — на листе «Распределение».';
+    wm.getCell(34,2).alignment={wrapText:true};wm.getRow(34).height=33;
+  }else{
+    wm.mergeCells(29,2,29,5);wm.getCell(29,2).value='В выбранном периоде нет группы с рассчитанной стоимостью. Проверьте исходные данные на листе «Что уточнить».';
+    wm.getCell(29,2).alignment={wrapText:true};wm.getRow(29).height=34;
+  }
+  wm.mergeCells(36,2,36,5);wm.getCell(36,2).value='Важное ограничение: если для отдельного педагога за месяц не найдены начисления в загруженном РОУ, стоимость может быть занижена. Такие случаи перечислены на листе «Что уточнить».';
+  wm.getCell(36,2).alignment={wrapText:true};wm.getRow(36).height=40;wm.getCell(36,2).font={name:'Calibri',size:10,color:{argb:C.muted}};
+  wm.views=[{showGridLines:false}];wm.pageSetup={orientation:'portrait',paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:1,margins:{left:.3,right:.3,top:.4,bottom:.4,header:.2,footer:.2}};
   /* ---- Проверка данных ---- */
   const order={err:0,warn:1,info:2,ok:3};const lab={err:'Ошибка',warn:'Внимание',info:'Сведения',ok:'Проверено'};
   const issues=R.checks.filter(c=>c.lvl==='err'||c.lvl==='warn');
