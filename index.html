@@ -529,6 +529,7 @@ function compute(){
   }
   if(!Object.keys(S.payroll).length&&months.length)add('err','Начисления',null,'Файл начислений не загружен','Без начислений стоимость часа не считается.');
   for(const m of Object.keys(S.tabel)){
+    if(m===EXCLUDED_MONTH)continue;
     const T=S.tabel[m];
     if(T.control!=null){const s=T.rows.reduce((a,r)=>a+r.tot,0);
       if(Math.abs(s-T.control)>1)add('err','Детский табель',m,'Сумма минут в строках не совпадает с итогом файла','Строки: '+fmt(s,0)+', итог в файле: '+fmt(T.control,0)+'. Возможно, выгрузка неполная.');
@@ -536,6 +537,7 @@ function compute(){
     if(T.bad.noName||T.bad.noGroup)add('warn','Детский табель',m,'Строки с пустыми значениями','Без ФИО ребёнка: '+T.bad.noName+', без группы: '+T.bad.noGroup);
   }
   for(const m of Object.keys(S.report)){
+    if(m===EXCLUDED_MONTH)continue;
     const R=S.report[m];
     if(R.control&&R.control.fact!=null){
       if(Math.abs(R.sumFact-R.control.fact)>1)add('err','Отчёт по часам',m,'Сумма минут (факт) не совпадает с итогом файла','Строки: '+fmt(R.sumFact,0)+', итог в файле: '+fmt(R.control.fact,0)+'. Возможно, выгрузка неполная.');
@@ -844,7 +846,7 @@ async function exportXlsx(){
   wm.views=[{showGridLines:false}];wm.pageSetup={orientation:'portrait',paperSize:9,fitToPage:true,fitToWidth:1,fitToHeight:1,margins:{left:.3,right:.3,top:.4,bottom:.4,header:.2,footer:.2}};
   /* ---- Проверка данных ---- */
   const order={err:0,warn:1,info:2,ok:3};const lab={err:'Ошибка',warn:'Внимание',info:'Сведения',ok:'Проверено'};
-  const issues=R.checks.filter(c=>c.lvl==='err'||c.lvl==='warn');
+  const issues=R.checks.filter(c=>(c.lvl==='err'||c.lvl==='warn')&&c.month!==EXCLUDED_MONTH);
   const cnt={err:0,warn:0,info:0,ok:0};issues.forEach(c=>cnt[c.lvl]++);
   title(wk,'Что нужно уточнить',sub,4);
   wk.mergeCells(3,1,3,4);wk.getCell(3,1).value=issues.length?'Вопросов для уточнения: '+issues.length+'.':'Вопросов, требующих уточнения, не найдено.';wk.getCell(3,1).font={name:'Calibri',size:11,bold:true,color:{argb:C.teal}};
@@ -855,6 +857,9 @@ async function exportXlsx(){
   // Не называем отсутствие записи доказательством отсутствия выплаты.
   const human=(c)=>{
     const month=c.month?mFull(c.month):'За весь период';
+    const reportFile=c.month&&S.report[c.month]?S.report[c.month].fileName:null;
+    const childFile=c.month&&S.tabel[c.month]?S.tabel[c.month].fileName:null;
+    const payFile=c.month&&S.payroll[c.month]?S.payroll[c.month].fileName:null;
     if(c.sec==='Начисления'&&c.text.includes('В предоставленной выгрузке')){
       const name=c.text.split(' — ')[0];
       return [month,name,'В загруженном файле РОУ не найдены начисления за этот месяц, хотя педагогические часы есть. Сумма расходов по группе может быть занижена.','Найти сотрудника и месяц на листе «РОУ — исходные данные». Если начисления были, проверить полноту выгрузки и написание ФИО.'];
@@ -877,7 +882,7 @@ async function exportXlsx(){
     if(c.sec==='Отчёт по часам'){
       if(c.text.includes('Сумма минут'))return [month,'Педагогический отчёт','Общее время занятий по строкам не совпадает с итогом файла. Это может повлиять на распределение расходов.','Проверить, полная ли выгрузка педагогического отчёта за месяц.'];
       if(c.text.includes('нет итоговой строки'))return [month,'Педагогический отчёт','В файле отсутствует итоговое количество минут, поэтому программа не смогла проверить, все ли строки выгрузились.','Проверить полноту файла педагогических часов.'];
-      if(c.text.includes('другого месяца'))return [month,'Педагогический отчёт','В файле есть '+(c.text.match(/\d+$/)||['несколько'])[0]+' записей с датой другого месяца. Они не вошли в расчёт этого месяца.','Проверить даты занятий и нужный месяц выгрузки.'];
+      if(c.text.includes('другого месяца'))return [month,reportFile||'Педагогический отчёт','В файле «'+(reportFile||'Педагогический отчёт')+'» есть '+(c.text.match(/\d+$/)||['несколько'])[0]+' записей с датами другого месяца. Они не учтены в расчёте '+month.toLowerCase()+'.','Открыть указанный файл, проверить даты этих занятий и при необходимости сформировать правильную выгрузку.'];
       return [month,'Педагогический отчёт','Есть строки с незаполненными полями. '+(c.detail||'')+'. Это не обязательно ошибка, но некоторые занятия могут быть учтены неверно.','Проверить прежде всего строки без кода группы, ФИО педагога или даты.'];
     }
     if(c.sec==='Руководители групп')return [month,'Руководители групп',c.text,'Проверить файл с руководителями групп. Это влияет на подписи групп, но не на сумму начислений.'];
