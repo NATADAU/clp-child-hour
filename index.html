@@ -816,7 +816,7 @@ async function exportXlsx(){
   [['Начисления педагога за месяц',60000],['Время непосредственной работы — всего, часов',30],['Из них в группе № 8, часов',12],['Начисления, отнесённые на группу № 8, ₽',null],['Посещения детей группы № 8, детских часов',48],['Доля расходов этого педагога на один детский час, ₽',null]].forEach(([name,value],i)=>{
     const n=20+i;wm.mergeCells(n,2,n,4);wm.getCell(n,2).value=name;wm.getCell(n,2).font={name:'Calibri',size:11,color:{argb:C.ink}};
     const x=wm.getCell(n,5);x.value=i===3?{formula:'E20*E22/E21',result:24000}:i===5?{formula:'E23/E24',result:500}:value;
-    x.numFmt='#,##0.##';x.font={name:'Calibri',bold:i>=3,color:{argb:C.ink}};
+    x.numFmt=(i===0||i===3||i===5)?'#,##0.00':'#,##0';x.font={name:'Calibri',bold:i===3||i===5,color:{argb:C.ink}};
     if(i===3||i===5){for(let c=2;c<=5;c++)wm.getCell(n,c).fill=fill(C.soft)}
     wm.getRow(n).height=23;
   });
@@ -825,12 +825,12 @@ async function exportXlsx(){
   const sample=okG.find(g=>g.child>0&&g.cost!=null)||mains.find(g=>g.child>0&&g.cost!=null);
   wm.mergeCells(28,2,28,5);wm.getCell(28,2).value='ПРИМЕР ИЗ ЭТОЙ ВЫГРУЗКИ';wm.getCell(28,2).font={name:'Calibri',bold:true,color:{argb:C.teal},size:12};
   if(sample){
-    wm.mergeCells(29,2,29,4);wm.getCell(29,2).value='Группа';wm.getCell(29,5).value=sample.g;
+    wm.mergeCells(29,2,29,4);wm.getCell(29,2).value='Группа';wm.getCell(29,5).value=String(sample.g);wm.getCell(29,5).numFmt='@';
     wm.mergeCells(30,2,30,4);wm.getCell(30,2).value='Посещения детей, часов';wm.getCell(30,5).value=sample.child;
     wm.mergeCells(31,2,31,4);wm.getCell(31,2).value='Начисления всех педагогов, отнесённые на группу, ₽';wm.getCell(31,5).value=sample.alloc;
     wm.mergeCells(32,2,32,4);wm.getCell(32,2).value='Стоимость одного детского часа, ₽';
     wm.getCell(32,5).value={formula:'IF(E30>0,E31/E30,"")',result:sample.cost};
-    for(let n=29;n<=32;n++){wm.getCell(n,2).font={name:'Calibri',size:11,color:{argb:C.ink}};wm.getCell(n,5).numFmt='#,##0.##';wm.getRow(n).height=24}
+    for(let n=29;n<=32;n++){wm.getCell(n,2).font={name:'Calibri',size:11,color:{argb:C.ink}};wm.getCell(n,5).alignment={horizontal:'right',vertical:'middle'};wm.getCell(n,5).numFmt=n===29?'@':n===30?'#,##0.00':'#,##0.00';wm.getRow(n).height=27}
     for(let c=2;c<=5;c++)wm.getCell(32,c).fill=fill(C.soft);
     wm.getCell(32,5).font={name:'Calibri',bold:true,size:12,color:{argb:C.teal}};
     wm.mergeCells(34,2,34,5);wm.getCell(34,2).value='Данные этой группы приведены на листе «Стоимость часа». Состав начислений по каждому педагогу и месяцу — на листе «Распределение».';
