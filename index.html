@@ -270,12 +270,12 @@ function parseReport(rows,fname){
   const cnt={};const rowsOut=[];const bad={noDate:0,noFio:0,noCode:0,noHours:0,noType:0};
   for(const {r} of raw){
     const d=parseDate(r[C.date]);
-    if(!d){if(r[C.fio]!=null||r[C.type]!=null)bad.noDate++;continue}
+    if(!d){if((num(r[C.fact])||0)>0)bad.noDate++;continue}
     const k=keyOf(d.y,d.m);cnt[k]=(cnt[k]||0)+1;
     const fact=num(r[C.fact]);let hrs=C.hours>=0?num(r[C.hours]):null;
     if(hrs==null&&fact!=null){hrs=fact/60;bad.noHours++}
     const fio=String(r[C.fio]==null?'':r[C.fio]).trim();const code=normCode(r[C.code]);const type=String(r[C.type]==null?'':r[C.type]).trim().toUpperCase();const childLabel=C.child>=0?String(r[C.child]==null?'':r[C.child]).trim():'';
-    if(!fio)bad.noFio++;if(!code)bad.noCode++;if(!type)bad.noType++;
+    if((hrs||0)>0){if(!fio)bad.noFio++;if(!code)bad.noCode++;if(!type)bad.noType++;}
     rowsOut.push({k,fio,code,type,hrs:hrs||0,fact:fact||0,reason:C.reason>=0?r[C.reason]:null,childLabel});
   }
   let mk=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||monthFromName(fname);
@@ -545,7 +545,7 @@ function compute(){
     else add('warn','Отчёт по часам',m,'В файле нет итоговой строки «Всего минут», полноту выгрузки проверить нельзя');
     if(R.outOfMonth)add('warn','Отчёт по часам',m,'Строки с датами другого месяца не учтены: '+R.outOfMonth);
     const b=R.bad;
-    if(b.noDate||b.noFio||b.noCode||b.noHours||b.noType)add('warn','Отчёт по часам',m,'Строки с пустыми значениями','Без даты: '+b.noDate+', без ФИО: '+b.noFio+', без кода группы: '+b.noCode+', без типа занятия: '+b.noType+', часы взяты из минут: '+b.noHours);
+    if(b.noDate||b.noFio||b.noCode||b.noType)add('warn','Отчёт по часам',m,'Строки с пустыми значениями','Среди записей с фактическими часами: без даты — '+b.noDate+', без ФИО — '+b.noFio+', без кода группы — '+b.noCode+', без типа занятия — '+b.noType+'.');
   }
   // группы только в одном файле
   for(const m of months){
@@ -850,7 +850,7 @@ async function exportXlsx(){
   const cnt={err:0,warn:0,info:0,ok:0};issues.forEach(c=>cnt[c.lvl]++);
   title(wk,'Что нужно уточнить',sub,4);
   wk.mergeCells(3,1,3,4);wk.getCell(3,1).value=issues.length?'Вопросов для уточнения: '+issues.length+'.':'Вопросов, требующих уточнения, не найдено.';wk.getCell(3,1).font={name:'Calibri',size:11,bold:true,color:{argb:C.teal}};
-  ['Месяц','Кого или что проверить','Что обнаружено','Что сделать'].forEach((h,i)=>wk.getCell(5,i+1).value=h);
+  ['Месяц','Файл или сотрудник','Что обнаружено','Что проверить'].forEach((h,i)=>wk.getCell(5,i+1).value=h);
   head(wk,5,1,4);wk.getRow(5).height=28;
   [19,33,75,67].forEach((w,i)=>wk.getColumn(i+1).width=w);
   // Читатель видит: что произошло, влияет ли это на итог и что конкретно проверить.
@@ -873,7 +873,7 @@ async function exportXlsx(){
     if(c.sec==='Группы'){
       const gm=c.text.match(/Группа ([^:]+):/);
       if(gm)return [month,'Группа '+gm[1],'В файле «'+(reportFile||'Педагогический отчёт')+'» педагогические часы есть, а посещений детей в детском табеле нет. '+c.detail.split(' Проверьте')[0], 'Сверить посещения детей и причины пропусков в педагогическом отчёте. Если посещений действительно не было, это не ошибка начислений.'];
-      return [month,'Группы '+(c.detail||''),c.text.includes('Есть в табеле')?'Посещения детей отражены, но в педагогическом отчёте не найдены часы занятий этих групп.':'Часы педагогов и посещения детей не совпадают по группам.','Сверить номера групп и записи о занятиях в двух табелях за указанный месяц.'];
+      return [month,'Группы '+(c.detail||''),c.text.includes('Есть в табеле')?'В детском табеле «'+(childFile||'файл не указан')+'» есть посещения, но в педагогическом отчёте «'+(reportFile||'файл не указан')+'» нет занятий этих групп.':'В файлах «'+(childFile||'детский табель')+'» и «'+(reportFile||'педагогический отчёт')+'» сведения о группах не совпадают.','Сверить номера групп и записи о занятиях в двух табелях за указанный месяц.'];
     }
     if(c.sec==='Детский табель'){
       if(c.text.includes('Сумма минут'))return [month,childFile||'Детский табель','Сумма часов посещений по строкам не совпадает с итогом файла. Возможно, часть записей отсутствует.','Проверить итог детского табеля за этот месяц и при необходимости выгрузить его снова.'];
